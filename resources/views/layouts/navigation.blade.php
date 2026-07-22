@@ -16,30 +16,30 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link href="#" :active="request()->routeIs('cases.*')">
+                    <x-nav-link :href="route('cases.index')" :active="request()->routeIs('cases.*')">
                         {{ __('Cases') }}
                     </x-nav-link>
 
-                    <x-nav-link href="#" :active="request()->routeIs('documents.*')">
+                    <x-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.*')">
                         {{ __('Documents') }}
                     </x-nav-link>
 
-                    <x-nav-link href="#" :active="request()->routeIs('scheduling.*')">
+                    <x-nav-link :href="route('court-dates.index')" :active="request()->routeIs('court-dates.*')">
                         {{ __('Scheduling') }}
                     </x-nav-link>
 
                     @can('view-financials')
-                    <x-nav-link href="#" :active="request()->routeIs('billing.*')">
+                    <x-nav-link :href="route('billing.index')" :active="request()->routeIs('billing.*')">
                         {{ __('Billing') }}
                     </x-nav-link>
                     @endcan
 
-                    <x-nav-link href="#" :active="request()->routeIs('clients.*')">
+                    <x-nav-link :href="route('clients.index')" :active="request()->routeIs('clients.*')">
                         {{ __('Clients') }}
                     </x-nav-link>
 
                     @can('manage-users')
-                    <x-nav-link href="#" :active="request()->routeIs('users.*')">
+                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                         {{ __('Users') }}
                     </x-nav-link>
                     @endcan
@@ -100,30 +100,30 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="#" :active="request()->routeIs('cases.*')">
+            <x-responsive-nav-link :href="route('cases.index')" :active="request()->routeIs('cases.*')">
                 {{ __('Cases') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="#" :active="request()->routeIs('documents.*')">
+            <x-responsive-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.*')">
                 {{ __('Documents') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="#" :active="request()->routeIs('scheduling.*')">
+            <x-responsive-nav-link :href="route('court-dates.index')" :active="request()->routeIs('court-dates.*')">
                 {{ __('Scheduling') }}
             </x-responsive-nav-link>
 
             @can('view-financials')
-            <x-responsive-nav-link href="#" :active="request()->routeIs('billing.*')">
+            <x-responsive-nav-link :href="route('billing.index')" :active="request()->routeIs('billing.*')">
                 {{ __('Billing') }}
             </x-responsive-nav-link>
             @endcan
 
-            <x-responsive-nav-link href="#" :active="request()->routeIs('clients.*')">
+            <x-responsive-nav-link :href="route('clients.index')" :active="request()->routeIs('clients.*')">
                 {{ __('Clients') }}
             </x-responsive-nav-link>
 
             @can('manage-users')
-            <x-responsive-nav-link href="#" :active="request()->routeIs('users.*')">
+            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                 {{ __('Users') }}
             </x-responsive-nav-link>
             @endcan

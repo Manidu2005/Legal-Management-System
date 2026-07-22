@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\LegalCase;
 use App\Models\User;
+use App\Observers\LegalCaseObserver;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,6 +23,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register observers
+        LegalCase::observe(LegalCaseObserver::class);
+
         // Gate: view-financials — only partners can view financial data
         Gate::define('view-financials', function (User $user): bool {
             return $user->role === 'partner';

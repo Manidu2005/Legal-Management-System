@@ -28,7 +28,7 @@
                             </div>
                             <div class="ms-4">
                                 <p class="text-sm font-medium text-gray-500">Total Cases</p>
-                                <p class="text-2xl font-semibold text-gray-900" id="stat-total-cases">—</p>
+                                <p class="text-2xl font-semibold text-gray-900" id="stat-total-cases">{{ $totalCases }}</p>
                             </div>
                         </div>
                     </div>
@@ -45,7 +45,7 @@
                             </div>
                             <div class="ms-4">
                                 <p class="text-sm font-medium text-gray-500">Upcoming Court Dates</p>
-                                <p class="text-2xl font-semibold text-gray-900" id="stat-court-dates">—</p>
+                                <p class="text-2xl font-semibold text-gray-900" id="stat-court-dates">{{ $upcomingCourtDates }}</p>
                             </div>
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                             </div>
                             <div class="ms-4">
                                 <p class="text-sm font-medium text-gray-500">Active Clients</p>
-                                <p class="text-2xl font-semibold text-gray-900" id="stat-clients">—</p>
+                                <p class="text-2xl font-semibold text-gray-900" id="stat-clients">{{ $activeClients }}</p>
                             </div>
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                             </div>
                             <div class="ms-4">
                                 <p class="text-sm font-medium text-gray-500">Documents</p>
-                                <p class="text-2xl font-semibold text-gray-900" id="stat-documents">—</p>
+                                <p class="text-2xl font-semibold text-gray-900" id="stat-documents">{{ $totalDocuments }}</p>
                             </div>
                         </div>
                     </div>
@@ -91,25 +91,25 @@
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <a href="#" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors duration-200">
+                        <a href="{{ route('cases.create') }}" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors duration-200">
                             <svg class="h-8 w-8 text-indigo-600 mb-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>
                             <span class="text-sm font-medium text-gray-700">New Case</span>
                         </a>
-                        <a href="#" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors duration-200">
+                        <a href="{{ route('clients.create') }}" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors duration-200">
                             <svg class="h-8 w-8 text-indigo-600 mb-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
                             </svg>
                             <span class="text-sm font-medium text-gray-700">New Client</span>
                         </a>
-                        <a href="#" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors duration-200">
+                        <a href="{{ route('documents.create') }}" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors duration-200">
                             <svg class="h-8 w-8 text-indigo-600 mb-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                             </svg>
                             <span class="text-sm font-medium text-gray-700">Upload Document</span>
                         </a>
-                        <a href="#" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors duration-200">
+                        <a href="{{ route('court-dates.create') }}" class="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-indigo-50 transition-colors duration-200">
                             <svg class="h-8 w-8 text-indigo-600 mb-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
                             </svg>

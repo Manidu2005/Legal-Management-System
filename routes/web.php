@@ -4,12 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -17,4 +13,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+// Module routes
+require __DIR__.'/cases.php';        // Module 5: Cases CRUD + Dashboard
+require __DIR__.'/documents.php';    // Module 1: Documents & Search
+require __DIR__.'/scheduling.php';   // Module 2: Court Dates
+require __DIR__.'/billing.php';      // Module 3: Billing & Financial
+require __DIR__.'/users.php';        // Module 4: Users & Client Intake
+require __DIR__.'/auth.php';         // Auth (Breeze)
