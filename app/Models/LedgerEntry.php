@@ -43,4 +43,12 @@ class LedgerEntry extends Model
     {
         return $this->belongsTo(User::class, 'recorded_by');
     }
+
+    /**
+     * Alias for recorder — used by eager loading in LegalCaseController.
+     */
+    public function recordedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'recorded_by');
+    }
 }
