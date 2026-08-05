@@ -118,31 +118,46 @@
                 </div>
             </div>
 
-            {{-- PDF Preview --}}
-            @if (strtolower($document->file_type) === 'pdf')
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Document Preview</h3>
-                        <div class="border border-gray-200 rounded-lg overflow-hidden">
-                            <iframe
-                                src="{{ Storage::disk('public')->url($document->file_path) }}"
-                                class="w-full"
-                                style="height: 700px;"
-                                title="Document Preview"
-                            ></iframe>
+            {{-- Document Preview --}}
+            @if (Storage::disk('public')->exists($document->file_path))
+                @if (strtolower($document->file_type) === 'pdf')
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Document Preview</h3>
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <iframe
+                                    src="{{ route('documents.preview', $document) }}"
+                                    class="w-full"
+                                    style="height: 700px;"
+                                    title="Document Preview"
+                                ></iframe>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @elseif (in_array(strtolower($document->file_type), ['jpg', 'png']))
+                @elseif (in_array(strtolower($document->file_type), ['jpg', 'png']))
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Document Preview</h3>
+                            <div class="border border-gray-200 rounded-lg overflow-hidden flex justify-center bg-gray-50 p-4">
+                                <img
+                                    src="{{ route('documents.preview', $document) }}"
+                                    alt="Document Preview"
+                                    class="max-w-full max-h-[700px] object-contain rounded"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            @else
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Document Preview</h3>
-                        <div class="border border-gray-200 rounded-lg overflow-hidden flex justify-center bg-gray-50 p-4">
-                            <img
-                                src="{{ Storage::disk('public')->url($document->file_path) }}"
-                                alt="Document Preview"
-                                class="max-w-full max-h-[700px] object-contain rounded"
-                            />
+                        <div class="border border-gray-200 rounded-lg overflow-hidden flex flex-col items-center justify-center bg-gray-50 p-12 text-center">
+                            <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                            </svg>
+                            <h3 class="text-sm font-medium text-gray-900">Preview not available</h3>
+                            <p class="mt-1 text-sm text-gray-500">This is a seeded demo document without an actual physical file on the server.</p>
                         </div>
                     </div>
                 </div>

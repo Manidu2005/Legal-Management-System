@@ -111,6 +111,24 @@ class DocumentController extends Controller
     }
 
     /**
+     * Preview a document file in the browser.
+     */
+    public function preview(Document $document)
+    {
+        if (Storage::disk('public')->exists($document->file_path)) {
+            $path = Storage::disk('public')->path($document->file_path);
+            $mimeType = Storage::disk('public')->mimeType($document->file_path);
+            
+            return response()->file($path, [
+                'Content-Type' => $mimeType,
+                'Content-Disposition' => 'inline; filename="'.basename($document->file_path).'"'
+            ]);
+        }
+
+        abort(404, 'The file could not be found on the server. This may be a demo record.');
+    }
+
+    /**
      * Delete a document from storage and database.
      */
     public function destroy(Document $document): RedirectResponse
