@@ -94,6 +94,23 @@ class DocumentController extends Controller
     }
 
     /**
+     * Download a document file.
+     */
+    public function download(Document $document): Response|RedirectResponse
+    {
+        if (Storage::disk('public')->exists($document->file_path)) {
+            return Storage::disk('public')->download(
+                $document->file_path,
+                basename($document->file_path)
+            );
+        }
+
+        return redirect()
+            ->back()
+            ->with('error', 'The file could not be found on the server. This may be a demo record without an actual file.');
+    }
+
+    /**
      * Delete a document from storage and database.
      */
     public function destroy(Document $document): RedirectResponse

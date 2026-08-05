@@ -22,6 +22,12 @@
                 </div>
             @endif
 
+            @if (session('error'))
+                <div class="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-700 border border-red-200">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             {{-- Document Info Card --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
@@ -90,7 +96,7 @@
 
                     {{-- Action Buttons --}}
                     <div class="mt-6 pt-6 border-t border-gray-200 flex items-center gap-3">
-                        <a href="{{ Storage::disk('public')->url($document->file_path) }}" download>
+                        <a href="{{ route('documents.download', $document) }}">
                             <x-primary-button type="button">
                                 <svg class="w-4 h-4 me-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
