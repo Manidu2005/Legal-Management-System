@@ -92,4 +92,44 @@ class BillingController extends Controller
 
         return $pdf->download($filename);
     }
+
+    /**
+     * Generate firm-wide financial summary PDF (partner only).
+     */
+    public function exportFinancialReport()
+    {
+        Gate::authorize('view-financials');
+
+        $cases = LegalCase::with(['client', 'assignedAttorney', 'courtDates', 'ledgerEntries'])->get();
+
+        $caseSummaries = $cases->map(function (LegalCase $case) {
+            $trialDateCount    = $case->courtDates->where('type', 'trial_date')->count();
+            $attorneyRate      = $case->assignedAttorney->flat_appearance_rate ?? 0;
+            $appearanceFee     = $trialDateCount * (float) $attorneyRate;
+            $trustBalance      = (float) $case->ledgerEntries->where('type', 'trust')->sum('amount');
+            $operationalBalance = (float) $case->ledgerEntries->where('type', 'operational')->sum('amount');
+
+            return [
+                'case'                => $case,
+                'trial_date_count'    => $trialDateCount,
+                'appearance_fee'      => $appearanceFee,
+                'trust_balance'       => $trustBalance,
+                'operational_balance' => $operationalBalance,
+            ];
+        });
+
+        $totalRevenue = $caseSummaries->sum('operational_balance');
+        $totalTrust   = $caseSummaries->sum('trust_balance');
+        $totalCases   = $caseSummaries->count();
+
+        $pdf = Pdf::loadView('documents.templates.financial_report', [
+            'caseSummaries' => $caseSummaries,
+            'totalRevenue'  => $totalRevenue,
+            'totalTrust'    => $totalTrust,
+            'totalCases'    => $totalCases,
+            'generatedAt'   => now()->format('d F Y, g:i A'),
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->download('LexLanka_Financial_Report_' . now()->format('Y-m-d') . '.pdf');
+    }
 }

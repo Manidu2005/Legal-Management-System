@@ -6,6 +6,7 @@ use App\Http\Requests\StoreCourtDateRequest;
 use App\Models\CourtDate;
 use App\Models\LegalCase;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CourtDateController extends Controller
@@ -87,5 +88,36 @@ class CourtDateController extends Controller
         return redirect()
             ->route('court-dates.index')
             ->with('success', 'Court date removed successfully.');
+    }
+
+    /**
+     * Show the form for editing the specified court date.
+     */
+    public function edit(CourtDate $courtDate): View
+    {
+        $cases = LegalCase::with('client')
+            ->whereNotIn('status', ['case_closed'])
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('court-dates.edit', compact('courtDate', 'cases'));
+    }
+
+    /**
+     * Update the specified court date.
+     */
+    public function update(Request $request, CourtDate $courtDate): RedirectResponse
+    {
+        $validated = $request->validate([
+            'case_id'  => ['required', 'exists:legal_cases,id'],
+            'date'     => ['required', 'date'],
+            'type'     => ['required', 'in:calling_date,trial_date'],
+        ]);
+
+        $courtDate->update($validated);
+
+        return redirect()
+            ->route('court-dates.index')
+            ->with('success', 'Court date updated successfully.');
     }
 }

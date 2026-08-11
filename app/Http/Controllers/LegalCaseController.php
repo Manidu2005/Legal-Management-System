@@ -7,7 +7,9 @@ use App\Http\Requests\UpdateLegalCaseRequest;
 use App\Models\Client;
 use App\Models\LegalCase;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class LegalCaseController extends Controller
 {
@@ -155,5 +157,38 @@ class LegalCaseController extends Controller
 
         return redirect()->route('cases.show', $case)
             ->with('success', 'Case updated successfully.');
+    }
+
+    /**
+     * Generate and download a PDF case brief.
+     */
+    public function exportBrief(Request $request, LegalCase $case): Response
+    {
+        $user = $request->user();
+
+        // Associates can only export their own cases
+        if ($user->role === 'associate' && $case->assigned_attorney_id !== $user->id) {
+            abort(403);
+        }
+
+        $case->load([
+            'client',
+            'assignedAttorney',
+            'courtDates' => fn ($q) => $q->orderBy('date', 'asc'),
+            'documents',
+            'ledgerEntries',
+        ]);
+
+        $caseRef = 'LEX-' . $case->created_at->format('Y') . '-' . str_pad($case->id, 3, '0', STR_PAD_LEFT);
+
+        $pdf = Pdf::loadView('pdf.case-brief', [
+            'case'      => $case,
+            'caseRef'   => $caseRef,
+            'generatedAt' => now()->format('d F Y, g:i A'),
+        ])->setPaper('a4', 'portrait');
+
+        $filename = 'case-brief-' . strtolower($caseRef) . '.pdf';
+
+        return $pdf->download($filename);
     }
 }
