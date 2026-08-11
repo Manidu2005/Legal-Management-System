@@ -1,16 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <div class="flex items-center justify-between w-full">
+            <h2 class="heading-display !text-3xl text-slate-800">
                 {{ __('User Management') }}
             </h2>
-            <a href="{{ route('users.create') }}">
-                <x-primary-button>
-                    <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    {{ __('Create User') }}
-                </x-primary-button>
+            <a href="{{ route('users.create') }}" class="btn-primary">
+                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                {{ __('Create User') }}
             </a>
         </div>
     </x-slot>
