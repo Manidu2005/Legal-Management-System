@@ -70,13 +70,15 @@
                             <td>
                                 @if($document->legalCase)
                                     <div class="flex items-center gap-2 font-mono text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100 w-fit">
-                                        LEX-{{ $document->legalCase->created_at->format('Y') }}-{{ str_pad($document->legalCase->id, 3, '0', STR_PAD_LEFT) }}
+                                        DOC-{{ str_pad($document->id, 4, '0', STR_PAD_LEFT) }}
                                     </div>
                                     <div class="text-xs text-slate-500 mt-1 font-medium truncate max-w-[200px]">
-                                        {{ $document->legalCase->case_type ?? '' }}
+                                        Case: LEX-{{ $document->legalCase->created_at->format('Y') }}-{{ str_pad($document->legalCase->id, 3, '0', STR_PAD_LEFT) }}
                                     </div>
                                 @else
-                                    <span class="text-slate-400">—</span>
+                                    <div class="flex items-center gap-2 font-mono text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100 w-fit">
+                                        DOC-{{ str_pad($document->id, 4, '0', STR_PAD_LEFT) }}
+                                    </div>
                                 @endif
                             </td>
                             <td>

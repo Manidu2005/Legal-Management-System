@@ -118,6 +118,33 @@
                 </div>
             </div>
 
+            {{-- Related Documents Section --}}
+            @if ($document->legalCase)
+                @php
+                    $relatedDocs = $document->legalCase->documents()->where('id', '!=', $document->id)->get();
+                @endphp
+                @if ($relatedDocs->count() > 0)
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                        <div class="p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Other Documents in this Case</h3>
+                            <ul class="divide-y divide-gray-200">
+                                @foreach ($relatedDocs as $relDoc)
+                                    <li class="py-3 flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <svg class="h-5 w-5 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                            </svg>
+                                            <span class="text-sm font-medium text-gray-900">Document #{{ $relDoc->id }} ({{ ucfirst($relDoc->category) }})</span>
+                                        </div>
+                                        <a href="{{ route('documents.show', $relDoc) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">View</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+            @endif
+
             {{-- Document Preview --}}
             @if (Storage::disk('public')->exists($document->file_path))
                 @if (strtolower($document->file_type) === 'pdf')

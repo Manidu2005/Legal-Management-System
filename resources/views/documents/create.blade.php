@@ -36,18 +36,33 @@
                         </div>
 
                         {{-- File Upload --}}
-                        <div class="mb-6">
-                            <x-input-label for="documents" :value="__('Document Files')" />
-                            <input type="file" id="documents" name="documents[]" accept=".pdf,.jpg,.png" multiple
-                                class="mt-1 block w-full text-sm text-gray-500
-                                    file:me-4 file:py-2 file:px-4
-                                    file:rounded-md file:border-0
-                                    file:text-sm file:font-semibold
-                                    file:bg-indigo-50 file:text-indigo-700
-                                    hover:file:bg-indigo-100
-                                    cursor-pointer border border-gray-300 rounded-md"
-                                required />
-                            <p class="mt-1 text-xs text-gray-500">Accepted formats: PDF, JPG, PNG. <span class="font-medium">25MB max per file</span>. You can select multiple files.</p>
+                        <div class="mb-6" id="file-upload-container">
+                            <div class="flex items-center justify-between mb-2">
+                                <x-input-label :value="__('Document Files')" />
+                                <button type="button" id="add-file-btn" class="text-sm text-indigo-600 hover:text-indigo-900 font-medium">
+                                    + Add another file
+                                </button>
+                            </div>
+                            
+                            <div id="file-inputs" class="space-y-3">
+                                <div class="file-input-group flex items-center gap-2">
+                                    <input type="file" name="documents[]" accept=".pdf,.jpg,.png" multiple
+                                        class="block w-full text-sm text-gray-500
+                                            file:me-4 file:py-2 file:px-4
+                                            file:rounded-md file:border-0
+                                            file:text-sm file:font-semibold
+                                            file:bg-indigo-50 file:text-indigo-700
+                                            hover:file:bg-indigo-100
+                                            cursor-pointer border border-gray-300 rounded-md"
+                                        required />
+                                    <button type="button" class="remove-file-btn hidden text-red-500 hover:text-red-700 p-2">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="mt-2 text-xs text-gray-500">Accepted formats: PDF, JPG, PNG. <span class="font-medium">25MB max per file</span>. You can select multiple files at once or add more inputs.</p>
                             <x-input-error :messages="$errors->get('documents')" class="mt-2" />
                             <x-input-error :messages="$errors->get('documents.*')" class="mt-2" />
                         </div>
@@ -85,4 +100,29 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('file-inputs');
+            const addBtn = document.getElementById('add-file-btn');
+            
+            addBtn.addEventListener('click', function() {
+                const groups = container.querySelectorAll('.file-input-group');
+                const clone = groups[0].cloneNode(true);
+                
+                // Clear the input value
+                const input = clone.querySelector('input[type="file"]');
+                input.value = '';
+                input.removeAttribute('required'); // Only the first is required
+                
+                // Show the remove button
+                const removeBtn = clone.querySelector('.remove-file-btn');
+                removeBtn.classList.remove('hidden');
+                removeBtn.addEventListener('click', function() {
+                    clone.remove();
+                });
+                
+                container.appendChild(clone);
+            });
+        });
+    </script>
 </x-app-layout>
