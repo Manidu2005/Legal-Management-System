@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Client Intake — New Registration') }}
-            </h2>
+        <div class="flex items-center gap-4 w-full">
             <a href="{{ route('clients.index') }}" class="text-sm text-gray-500 hover:text-gray-700 underline">
                 ← Back to Clients
             </a>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Client Intake — New Registration') }}
+            </h2>
         </div>
     </x-slot>
 
@@ -14,7 +14,7 @@
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <form method="POST" action="{{ route('clients.store') }}">
+                    <form method="POST" action="{{ route('clients.store') }}" enctype="multipart/form-data">
                         @csrf
 
                         {{-- NIC - Prominent Primary Field --}}
@@ -48,12 +48,18 @@
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
                         </div>
 
-                        {{-- Intake Date --}}
+                        {{-- Client Image (Optional) --}}
                         <div class="mb-6">
-                            <x-input-label for="intake_date" :value="__('Intake Date')" />
-                            <x-text-input id="intake_date" name="intake_date" type="date" class="mt-1 block w-full" :value="old('intake_date', date('Y-m-d'))" required />
-                            <x-input-error :messages="$errors->get('intake_date')" class="mt-2" />
+                            <x-input-label for="image" :value="__('Client Image (Optional)')" />
+                            <input id="image" name="image" type="file" accept="image/*" class="mt-1 block w-full text-sm text-gray-500
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-md file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-indigo-50 file:text-indigo-700
+                                hover:file:bg-indigo-100" />
+                            <x-input-error :messages="$errors->get('image')" class="mt-2" />
                         </div>
+
 
                         <div class="flex items-center justify-end gap-4">
                             <a href="{{ route('clients.index') }}">

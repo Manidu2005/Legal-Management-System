@@ -58,7 +58,7 @@
                     <tr>
                         <th>Case Reference</th>
                         <th>Category</th>
-                        <th>File Type</th>
+                        <th>Client Name</th>
                         <th>Uploaded By</th>
                         <th>Date</th>
                         <th class="text-right">Actions</th>
@@ -73,7 +73,7 @@
                                         LEX-{{ $document->legalCase->created_at->format('Y') }}-{{ str_pad($document->legalCase->id, 3, '0', STR_PAD_LEFT) }}
                                     </div>
                                     <div class="text-xs text-slate-500 mt-1 font-medium truncate max-w-[200px]">
-                                        {{ $document->legalCase->title ?? '' }}
+                                        {{ $document->legalCase->case_type ?? '' }}
                                     </div>
                                 @else
                                     <span class="text-slate-400">—</span>
@@ -91,10 +91,8 @@
                                 <span class="badge-dynamic border {{ $catClass }}">{{ ucfirst($document->category) }}</span>
                             </td>
                             <td>
-                                <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-xs uppercase shadow-sm">
-                                        {{ $document->file_type }}
-                                    </div>
+                                <div class="text-sm font-medium text-slate-800 truncate max-w-[200px]">
+                                    {{ $document->legalCase->client->name ?? 'Unknown Client' }}
                                 </div>
                             </td>
                             <td>
@@ -109,7 +107,7 @@
                                 <span class="text-slate-500 text-sm font-medium">{{ $document->created_at->format('d M Y') }}</span>
                             </td>
                             <td class="text-right">
-                                <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <div class="flex items-center justify-end gap-2 transition-opacity duration-200">
                                     <a href="{{ route('documents.show', $document) }}" class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="View Details">
                                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

@@ -65,20 +65,23 @@ class DocumentController extends Controller
      */
     public function store(StoreDocumentRequest $request): RedirectResponse
     {
-        $file = $request->file('document');
-        $path = Storage::disk('public')->putFile('documents', $file);
+        $files = $request->file('documents');
 
-        Document::create([
-            'case_id' => $request->input('case_id'),
-            'file_path' => $path,
-            'file_type' => $file->getClientOriginalExtension(),
-            'category' => $request->input('category'),
-            'uploaded_by' => $request->user()->id,
-        ]);
+        foreach ($files as $file) {
+            $path = Storage::disk('public')->putFile('documents', $file);
+
+            Document::create([
+                'case_id' => $request->input('case_id'),
+                'file_path' => $path,
+                'file_type' => $file->getClientOriginalExtension(),
+                'category' => $request->input('category'),
+                'uploaded_by' => $request->user()->id,
+            ]);
+        }
 
         return redirect()
             ->route('documents.index')
-            ->with('success', 'Document uploaded successfully.');
+            ->with('success', count($files) . ' document(s) uploaded successfully.');
     }
 
     /**

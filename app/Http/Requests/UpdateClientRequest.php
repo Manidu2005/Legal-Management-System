@@ -28,7 +28,8 @@ class UpdateClientRequest extends FormRequest
             'nic'         => ['required', 'string', 'regex:/^(\d{12}|\d{9}[Vv])$/', 'unique:clients,nic,' . $clientId],
             'phone'       => ['nullable', 'regex:/^\d{10}$/'],
             'email'       => 'nullable|email|max:255',
-            'intake_date' => 'required|date',
+            'image'       => 'nullable|image|max:2048',
+            'intake_date' => 'sometimes|required|date|before_or_equal:today',
         ];
     }
 

@@ -37,8 +37,8 @@
 
                         {{-- File Upload --}}
                         <div class="mb-6">
-                            <x-input-label for="document" :value="__('Document File')" />
-                            <input type="file" id="document" name="document" accept=".pdf,.jpg,.png"
+                            <x-input-label for="documents" :value="__('Document Files')" />
+                            <input type="file" id="documents" name="documents[]" accept=".pdf,.jpg,.png" multiple
                                 class="mt-1 block w-full text-sm text-gray-500
                                     file:me-4 file:py-2 file:px-4
                                     file:rounded-md file:border-0
@@ -47,8 +47,9 @@
                                     hover:file:bg-indigo-100
                                     cursor-pointer border border-gray-300 rounded-md"
                                 required />
-                            <p class="mt-1 text-xs text-gray-500">Accepted formats: PDF, JPG, PNG. <span class="font-medium">25MB max</span>.</p>
-                            <x-input-error :messages="$errors->get('document')" class="mt-2" />
+                            <p class="mt-1 text-xs text-gray-500">Accepted formats: PDF, JPG, PNG. <span class="font-medium">25MB max per file</span>. You can select multiple files.</p>
+                            <x-input-error :messages="$errors->get('documents')" class="mt-2" />
+                            <x-input-error :messages="$errors->get('documents.*')" class="mt-2" />
                         </div>
 
                         {{-- Category --}}

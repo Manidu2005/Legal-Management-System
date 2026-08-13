@@ -15,6 +15,18 @@ class StoreClientRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        if (!$this->has('intake_date')) {
+            $this->merge([
+                'intake_date' => now()->toDateString(),
+            ]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
@@ -26,7 +38,8 @@ class StoreClientRequest extends FormRequest
             'nic'         => ['required', 'string', 'unique:clients,nic', 'regex:/^(\d{12}|\d{9}[Vv])$/'],
             'phone'       => ['nullable', 'regex:/^\d{10}$/'],
             'email'       => 'nullable|email|max:255',
-            'intake_date' => 'required|date',
+            'image'       => 'nullable|image|max:2048',
+            'intake_date' => 'required|date|before_or_equal:today',
         ];
     }
 

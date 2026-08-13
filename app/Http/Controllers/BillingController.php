@@ -6,6 +6,7 @@ use App\Models\LegalCase;
 use App\Services\BillingService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Request;
 
 class BillingController extends Controller
 {
@@ -43,6 +44,34 @@ class BillingController extends Controller
         $totalCases = $caseSummaries->count();
 
         return view('billing.index', compact('caseSummaries', 'totalRevenue', 'totalTrust', 'totalCases'));
+    }
+
+    /**
+     * Show form to select a case for invoice generation.
+     */
+    public function createInvoice()
+    {
+        Gate::authorize('view-financials');
+
+        $cases = LegalCase::with('client')->where('status', '!=', 'case_closed')->get();
+
+        return view('billing.create-invoice', compact('cases'));
+    }
+
+    /**
+     * Handle the form submission and generate the invoice report.
+     */
+    public function generateInvoice(Request $request)
+    {
+        Gate::authorize('view-financials');
+
+        $request->validate([
+            'case_id' => 'required|exists:legal_cases,id',
+        ]);
+
+        $case = LegalCase::findOrFail($request->case_id);
+
+        return $this->generateReport($case);
     }
 
     /**

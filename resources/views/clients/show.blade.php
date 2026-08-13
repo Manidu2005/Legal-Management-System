@@ -1,10 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ $client->name }}
-            </h2>
-            <div class="flex items-center gap-3">
+        <div class="flex items-center justify-between w-full">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('clients.index') }}" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                    ← Back to Clients
+                </a>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    {{ $client->name }}
+                </h2>
+            </div>
+            <div>
                 <a href="{{ route('clients.edit', $client) }}">
                     <x-secondary-button>
                         <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -12,9 +17,6 @@
                         </svg>
                         {{ __('Edit') }}
                     </x-secondary-button>
-                </a>
-                <a href="{{ route('clients.index') }}" class="text-sm text-gray-500 hover:text-gray-700 underline">
-                    ← Back to Clients
                 </a>
             </div>
         </div>
@@ -37,8 +39,15 @@
             {{-- Client Detail Card --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Client Information</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="flex flex-col sm:flex-row gap-6">
+                        @if($client->image_path)
+                            <div class="shrink-0">
+                                <img src="{{ asset('storage/' . $client->image_path) }}" alt="{{ $client->name }}" class="w-32 h-32 object-cover rounded-lg shadow-sm border border-gray-200">
+                            </div>
+                        @endif
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Client Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div>
                             <dt class="text-sm font-medium text-gray-500">NIC</dt>
                             <dd class="mt-1 text-sm text-gray-900 font-mono font-semibold">{{ $client->nic }}</dd>
@@ -66,6 +75,8 @@
                                     {{ $client->cases->count() }}
                                 </span>
                             </dd>
+                        </div>
+                    </div>
                         </div>
                     </div>
                 </div>

@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between w-full">
             <h2 class="heading-display !text-3xl text-slate-800">Financial Dashboard</h2>
-            <a href="#" class="btn-primary">
+            <a href="{{ route('billing.create-invoice') }}" class="btn-primary">
                 <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
@@ -62,7 +62,7 @@
                     @forelse($caseSummaries as $summary)
                         <tr class="table-row-dynamic group">
                             <td>
-                                <div class="font-medium text-slate-800">{{ $summary['case']->title ?? 'N/A' }}</div>
+                                <div class="font-medium text-slate-800">{{ $summary['case']->client->name ?? 'Unknown Client' }}</div>
                                 <div class="text-xs text-indigo-600 font-mono mt-0.5">LEX-{{ $summary['case']->created_at->format('Y').'-'.str_pad($summary['case']->id, 3, '0', STR_PAD_LEFT) }}</div>
                             </td>
                             <td>
@@ -82,7 +82,7 @@
                                 </span>
                             </td>
                             <td class="text-right">
-                                <a href="{{ route('billing.case', $summary['case']) }}" class="btn-primary !py-1.5 !px-3 !text-xs opacity-0 group-hover:opacity-100 transition-opacity">Manage Billing</a>
+                                <a href="{{ route('billing.case', $summary['case']) }}" class="btn-primary !py-1.5 !px-3 !text-xs transition-opacity">Manage Billing</a>
                             </td>
                         </tr>
                     @empty

@@ -23,7 +23,8 @@ class StoreDocumentRequest extends FormRequest
     {
         return [
             'case_id' => ['required', 'exists:legal_cases,id'],
-            'document' => [
+            'documents' => ['required', 'array', 'min:1'],
+            'documents.*' => [
                 'required',
                 'file',
                 'mimes:pdf,jpg,png',
@@ -42,8 +43,9 @@ class StoreDocumentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'document.max' => 'File size exceeds 25MB limit.',
-            'document.mimes' => 'File type not supported. Allowed: PDF, JPG, PNG.',
+            'documents.required' => 'Please upload at least one document.',
+            'documents.*.max' => 'One or more files exceed the 25MB limit.',
+            'documents.*.mimes' => 'One or more files have an unsupported type. Allowed: PDF, JPG, PNG.',
         ];
     }
 }

@@ -41,7 +41,7 @@
                 <thead>
                     <tr>
                         <th>Reference</th>
-                        <th>Title</th>
+                        <th>Case Type</th>
                         <th>Client</th>
                         <th>Status</th>
                         <th class="text-right">Actions</th>
@@ -56,8 +56,7 @@
                                 </div>
                             </td>
                             <td>
-                                <div class="font-medium text-slate-800">{{ $case->title }}</div>
-                                <div class="text-xs text-slate-400 mt-0.5">{{ Str::limit($case->description, 50) }}</div>
+                                <div class="font-medium text-slate-800">{{ $case->case_type }}</div>
                             </td>
                             <td>
                                 <div class="flex items-center gap-2">
@@ -84,7 +83,7 @@
                                 </span>
                             </td>
                             <td class="text-right">
-                                <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <div class="flex items-center justify-end gap-2 transition-opacity duration-200">
                                     <a href="{{ route('cases.show', $case) }}" class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="View">
                                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

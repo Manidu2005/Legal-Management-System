@@ -16,6 +16,7 @@ class Client extends Model
         'nic',
         'phone',
         'email',
+        'image_path',
         'intake_date',
     ];
 

@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateClientRequest;
 use App\Models\Client;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ClientController extends Controller
@@ -44,7 +45,13 @@ class ClientController extends Controller
      */
     public function store(StoreClientRequest $request): RedirectResponse
     {
-        Client::create($request->validated());
+        $validated = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $validated['image_path'] = $request->file('image')->store('client_images', 'public');
+        }
+
+        Client::create($validated);
 
         return redirect()->route('clients.index')
             ->with('success', 'Client registered successfully.');
@@ -73,7 +80,16 @@ class ClientController extends Controller
      */
     public function update(UpdateClientRequest $request, Client $client): RedirectResponse
     {
-        $client->update($request->validated());
+        $validated = $request->validated();
+
+        if ($request->hasFile('image')) {
+            if ($client->image_path) {
+                Storage::disk('public')->delete($client->image_path);
+            }
+            $validated['image_path'] = $request->file('image')->store('client_images', 'public');
+        }
+
+        $client->update($validated);
 
         return redirect()->route('clients.show', $client)
             ->with('success', 'Client updated successfully.');
