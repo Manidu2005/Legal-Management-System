@@ -88,7 +88,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900">Cases</h3>
                         {{-- New Case button (links to case creation with pre-filled client) --}}
-                        <a href="#" {{-- route('cases.create', ['client' => $client->id]) when cases module is ready --}}>
+                        <a href="{{ route('cases.create', ['client_id' => $client->id]) }}">
                             <x-primary-button>
                                 <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -137,7 +137,7 @@
                                             {{ $case->assignedAttorney->name ?? '—' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <a href="#" class="text-indigo-600 hover:text-indigo-900">View</a>
+                                            <a href="{{ route('cases.show', $case) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
                                         </td>
                                     </tr>
                                 @empty

@@ -94,4 +94,19 @@ class ClientController extends Controller
         return redirect()->route('clients.show', $client)
             ->with('success', 'Client updated successfully.');
     }
+
+    /**
+     * Remove the specified client from storage.
+     */
+    public function destroy(Client $client): RedirectResponse
+    {
+        if ($client->image_path) {
+            Storage::disk('public')->delete($client->image_path);
+        }
+
+        $client->delete();
+
+        return redirect()->route('clients.index')
+            ->with('success', 'Client deleted successfully.');
+    }
 }

@@ -25,7 +25,7 @@
                                     required>
                                 <option value="">{{ __('Select a client...') }}</option>
                                 @foreach($clients as $client)
-                                    <option value="{{ $client->id }}" @selected(old('client_id') == $client->id)>
+                                    <option value="{{ $client->id }}" @selected(old('client_id', request('client_id')) == $client->id)>
                                         {{ $client->name }} ({{ $client->nic }})
                                     </option>
                                 @endforeach
