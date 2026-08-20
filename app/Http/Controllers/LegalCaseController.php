@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\EnsuresCaseAccessCode;
 use App\Http\Requests\StoreLegalCaseRequest;
 use App\Http\Requests\UpdateLegalCaseRequest;
 use App\Models\Client;
@@ -13,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class LegalCaseController extends Controller
 {
+    use EnsuresCaseAccessCode;
+
     /**
      * Display a listing of legal cases.
      */
@@ -42,7 +45,8 @@ class LegalCaseController extends Controller
                 ->orWhereHas('assignedAttorney', function ($attorneyQuery) use ($search) {
                     $attorneyQuery->where('name', 'like', "%{$search}%");
                 })
-                ->orWhere('case_type', 'like', "%{$search}%");
+                ->orWhere('case_type', 'like', "%{$search}%")
+                ->orWhere('name', 'like', "%{$search}%");
             });
         }
 
@@ -81,6 +85,12 @@ class LegalCaseController extends Controller
      */
     public function show(Request $request, LegalCase $case)
     {
+        if ($redirect = $this->redirectForCaseAccessCode($case)) {
+            return $redirect;
+        }
+
+        $this->authorize('view', $case);
+
         $case->load([
             'client',
             'assignedAttorney',
@@ -90,11 +100,6 @@ class LegalCaseController extends Controller
         ]);
 
         $user = $request->user();
-
-        // Associates can only view their own cases
-        if ($user->role === 'associate' && $case->assigned_attorney_id !== $user->id) {
-            abort(403);
-        }
 
         // Calculate billing summary
         $totalAppearanceFee = 0;
@@ -115,17 +120,11 @@ class LegalCaseController extends Controller
      */
     public function edit(Request $request, LegalCase $case)
     {
-        $user = $request->user();
+        // Clerks never edit — even a code-verified clerk only ever gains
+        // view rights via CaseAccessPolicy::view(), never edit rights.
+        abort_if($request->user()->role === 'clerk', 403);
 
-        // Clerks cannot edit
-        if ($user->role === 'clerk') {
-            abort(403);
-        }
-
-        // Associates can only edit their own cases
-        if ($user->role === 'associate' && $case->assigned_attorney_id !== $user->id) {
-            abort(403);
-        }
+        $this->authorize('view', $case);
 
         $clients = Client::orderBy('name')->get();
         $attorneys = User::where('role', '!=', 'clerk')
@@ -141,17 +140,11 @@ class LegalCaseController extends Controller
      */
     public function update(UpdateLegalCaseRequest $request, LegalCase $case)
     {
-        $user = $request->user();
+        // Clerks never update — even a code-verified clerk only ever gains
+        // view rights via CaseAccessPolicy::view(), never update rights.
+        abort_if($request->user()->role === 'clerk', 403);
 
-        // Clerks cannot update
-        if ($user->role === 'clerk') {
-            abort(403);
-        }
-
-        // Associates can only update their own cases
-        if ($user->role === 'associate' && $case->assigned_attorney_id !== $user->id) {
-            abort(403);
-        }
+        $this->authorize('view', $case);
 
         $case->update($request->validated());
 

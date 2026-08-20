@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center gap-4 w-full">
             <a href="{{ route('clients.index') }}" class="text-sm text-gray-500 hover:text-gray-700 underline">
-                ← Back to Clients
+                ← {{ __('Back to Clients') }}
             </a>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Client Intake — New Registration') }}
@@ -22,8 +22,8 @@
                             <x-input-label for="nic" class="text-base font-semibold text-indigo-900">
                                 {{ __('National Identity Card (NIC)') }} <span class="text-red-500">*</span>
                             </x-input-label>
-                            <p class="text-xs text-indigo-600 mb-2">This is the primary identifier for the client and must be unique.</p>
-                            <x-text-input id="nic" name="nic" type="text" class="mt-1 block w-full text-lg font-mono border-indigo-300 focus:border-indigo-500 focus:ring-indigo-500" :value="old('nic')" required autofocus placeholder="e.g. 200012345678 or 901234567V" />
+                            <p class="text-xs text-indigo-600 mb-2">{{ __('This is the primary identifier for the client and must be unique.') }}</p>
+                            <x-text-input id="nic" name="nic" type="text" class="mt-1 block w-full text-lg font-mono border-indigo-300 focus:border-indigo-500 focus:ring-indigo-500" :value="old('nic')" required autofocus placeholder="{{ __('e.g. 200012345678 or 901234567V') }}" />
                             <x-input-error :messages="$errors->get('nic')" class="mt-2" />
                         </div>
 
@@ -44,7 +44,7 @@
                         {{-- Email --}}
                         <div class="mb-4">
                             <x-input-label for="email" :value="__('Email Address')" />
-                            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email')" placeholder="Optional" />
+                            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email')" placeholder="{{ __('Optional') }}" />
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
                         </div>
 

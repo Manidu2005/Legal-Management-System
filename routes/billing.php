@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware('role:partner,associate')->group(function () {
-        Route::get('/billing', [BillingController::class, 'index'])->name('billing.index')->middleware('role:partner');
+        Route::get('/billing', [BillingController::class, 'index'])->name('billing.index')->middleware('can:view-financials');
         Route::get('/billing/export-report', [BillingController::class, 'exportFinancialReport'])->name('billing.export-report')->middleware('can:view-financials');
         Route::get('/billing/create-invoice', [BillingController::class, 'createInvoice'])->name('billing.create-invoice')->middleware('can:view-financials');
         Route::post('/billing/generate-invoice', [BillingController::class, 'generateInvoice'])->name('billing.generate-invoice')->middleware('can:view-financials');
@@ -14,5 +14,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/billing/case/{case}/report', [BillingController::class, 'generateReport'])->name('billing.report');
         Route::post('/ledger-entries', [LedgerEntryController::class, 'store'])->name('ledger-entries.store');
         Route::delete('/ledger-entries/{ledgerEntry}', [LedgerEntryController::class, 'destroy'])->name('ledger-entries.destroy');
+    });
+
+    // Firm-wide income broken down per attorney — partner only.
+    Route::middleware('role:partner')->group(function () {
+        Route::get('/firm-income', [BillingController::class, 'firmIncome'])->name('billing.firm-income');
     });
 });

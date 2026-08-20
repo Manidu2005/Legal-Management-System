@@ -43,6 +43,10 @@
     scroll-behavior: smooth;
   }
 
+  [x-cloak] {
+    display: none !important;
+  }
+
   body {
     font-family: var(--font-body);
     color: var(--color-text-base);

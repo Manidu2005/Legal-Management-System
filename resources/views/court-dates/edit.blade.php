@@ -26,10 +26,10 @@
                             <select id="case_id" name="case_id"
                                 class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                 required>
-                                <option value="">— Select a case —</option>
+                                <option value="">{{ __('— Select a case —') }}</option>
                                 @foreach ($cases as $case)
                                     <option value="{{ $case->id }}" @selected(old('case_id', $courtDate->case_id) == $case->id)>
-                                        Case #{{ $case->id }} — {{ $case->client->name ?? 'N/A' }}
+                                        {{ $case->display_name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -52,9 +52,9 @@
                             <select id="type" name="type"
                                 class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                 required>
-                                <option value="">— Select type —</option>
-                                <option value="calling_date" @selected(old('type', $courtDate->type) === 'calling_date')>Calling Date</option>
-                                <option value="trial_date"   @selected(old('type', $courtDate->type) === 'trial_date')>Trial Date</option>
+                                <option value="">{{ __('— Select type —') }}</option>
+                                <option value="calling_date" @selected(old('type', $courtDate->type) === 'calling_date')>{{ __('Calling Date') }}</option>
+                                <option value="trial_date"   @selected(old('type', $courtDate->type) === 'trial_date')>{{ __('Trial Date') }}</option>
                             </select>
                             <x-input-error :messages="$errors->get('type')" class="mt-2" />
                         </div>

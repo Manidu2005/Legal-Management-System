@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center gap-4 w-full">
             <a href="{{ route('users.index') }}" class="text-sm text-gray-500 hover:text-gray-700 underline">
-                ← Back to Users
+                ← {{ __('Back to Users') }}
             </a>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Edit User') }} — {{ $user->name }}
@@ -35,14 +35,14 @@
                         {{-- Password --}}
                         <div class="mb-4">
                             <x-input-label for="password" :value="__('New Password')" />
-                            <x-text-input id="password" name="password" type="password" class="mt-1 block w-full" placeholder="Leave blank to keep current" />
+                            <x-text-input id="password" name="password" type="password" class="mt-1 block w-full" placeholder="{{ __('Leave blank to keep current') }}" />
                             <x-input-error :messages="$errors->get('password')" class="mt-2" />
                         </div>
 
                         {{-- Confirm Password --}}
                         <div class="mb-4">
                             <x-input-label for="password_confirmation" :value="__('Confirm New Password')" />
-                            <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" placeholder="Leave blank to keep current" />
+                            <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" placeholder="{{ __('Leave blank to keep current') }}" />
                             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                         </div>
 
@@ -50,10 +50,10 @@
                         <div class="mb-4">
                             <x-input-label for="role" :value="__('Role')" />
                             <select id="role" name="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                                <option value="">Select a role</option>
-                                <option value="partner" {{ old('role', $user->role) === 'partner' ? 'selected' : '' }}>Partner</option>
-                                <option value="associate" {{ old('role', $user->role) === 'associate' ? 'selected' : '' }}>Associate</option>
-                                <option value="clerk" {{ old('role', $user->role) === 'clerk' ? 'selected' : '' }}>Clerk</option>
+                                <option value="">{{ __('Select a role') }}</option>
+                                <option value="partner" {{ old('role', $user->role) === 'partner' ? 'selected' : '' }}>{{ __('Partner') }}</option>
+                                <option value="associate" {{ old('role', $user->role) === 'associate' ? 'selected' : '' }}>{{ __('Associate') }}</option>
+                                <option value="clerk" {{ old('role', $user->role) === 'clerk' ? 'selected' : '' }}>{{ __('Clerk') }}</option>
                             </select>
                             <x-input-error :messages="$errors->get('role')" class="mt-2" />
                         </div>
@@ -61,7 +61,7 @@
                         {{-- Branch --}}
                         <div class="mb-4">
                             <x-input-label for="branch" :value="__('Branch')" />
-                            <x-text-input id="branch" name="branch" type="text" class="mt-1 block w-full" :value="old('branch', $user->branch)" required placeholder="e.g. Colombo Main, Kandy" />
+                            <x-text-input id="branch" name="branch" type="text" class="mt-1 block w-full" :value="old('branch', $user->branch)" required placeholder="{{ __('e.g. Colombo Main, Kandy') }}" />
                             <x-input-error :messages="$errors->get('branch')" class="mt-2" />
                         </div>
 

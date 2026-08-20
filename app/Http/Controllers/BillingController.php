@@ -15,13 +15,25 @@ class BillingController extends Controller
     ) {}
 
     /**
-     * Financial dashboard — partner only.
+     * Financial dashboard.
+     *
+     * Partners see all cases firm-wide.
+     * Associates see only their assigned cases plus an appearance-income
+     * summary (merged from the former My Income page).
      */
-    public function index()
+    public function index(Request $request)
     {
         Gate::authorize('view-financials');
 
-        $cases = LegalCase::with(['client', 'assignedAttorney', 'courtDates', 'ledgerEntries'])->get();
+        $user = $request->user();
+
+        $query = LegalCase::with(['client', 'assignedAttorney', 'courtDates', 'ledgerEntries']);
+
+        if ($user->role === 'associate') {
+            $query->where('assigned_attorney_id', $user->id);
+        }
+
+        $cases = $query->get();
 
         $caseSummaries = $cases->map(function (LegalCase $case) {
             $trialDateCount = $case->courtDates->where('type', 'trial_date')->count();
@@ -43,17 +55,34 @@ class BillingController extends Controller
         $totalTrust = $caseSummaries->sum('trust_balance');
         $totalCases = $caseSummaries->count();
 
-        return view('billing.index', compact('caseSummaries', 'totalRevenue', 'totalTrust', 'totalCases'));
+        // For associates, include the appearance-income summary that was
+        // formerly on the separate "My Income" page.
+        $incomeSummary = null;
+        if ($user->role === 'associate') {
+            $incomeSummary = $this->billingService->getAttorneyIncomeSummary($user);
+        }
+
+        return view('billing.index', compact(
+            'caseSummaries', 'totalRevenue', 'totalTrust', 'totalCases', 'incomeSummary'
+        ));
     }
 
     /**
      * Show form to select a case for invoice generation.
+     *
+     * Associates only see their own active cases.
      */
-    public function createInvoice()
+    public function createInvoice(Request $request)
     {
         Gate::authorize('view-financials');
 
-        $cases = LegalCase::with('client')->where('status', '!=', 'case_closed')->get();
+        $query = LegalCase::with('client')->where('status', '!=', 'case_closed');
+
+        if ($request->user()->role === 'associate') {
+            $query->where('assigned_attorney_id', $request->user()->id);
+        }
+
+        $cases = $query->get();
 
         return view('billing.create-invoice', compact('cases'));
     }
@@ -71,6 +100,8 @@ class BillingController extends Controller
 
         $case = LegalCase::findOrFail($request->case_id);
 
+        $this->authorize('view', $case);
+
         return $this->generateReport($case);
     }
 
@@ -79,6 +110,8 @@ class BillingController extends Controller
      */
     public function caseBilling(LegalCase $case)
     {
+        $this->authorize('view', $case);
+
         $case->load(['client', 'assignedAttorney', 'courtDates', 'ledgerEntries.recorder']);
 
         $summary = $this->billingService->getCaseBillingSummary($case);
@@ -102,6 +135,8 @@ class BillingController extends Controller
      */
     public function generateReport(LegalCase $case)
     {
+        $this->authorize('view', $case);
+
         $case->load(['client', 'assignedAttorney', 'courtDates', 'ledgerEntries']);
 
         $summary = $this->billingService->getCaseBillingSummary($case);
@@ -123,13 +158,36 @@ class BillingController extends Controller
     }
 
     /**
-     * Generate firm-wide financial summary PDF (partner only).
+     * Firm-wide appearance-fee income, broken down per attorney.
+     * Partner only.
      */
-    public function exportFinancialReport()
+    public function firmIncome()
+    {
+        $summary = $this->billingService->getFirmIncomeSummary();
+
+        return view('billing.firm-income', [
+            'attorneySummaries' => $summary['attorney_summaries'],
+            'grandTotal' => $summary['grand_total'],
+        ]);
+    }
+
+    /**
+     * Generate financial summary PDF.
+     *
+     * Partners get a firm-wide report across all cases.
+     * Associates get a report scoped to their own assigned cases.
+     */
+    public function exportFinancialReport(Request $request)
     {
         Gate::authorize('view-financials');
 
-        $cases = LegalCase::with(['client', 'assignedAttorney', 'courtDates', 'ledgerEntries'])->get();
+        $query = LegalCase::with(['client', 'assignedAttorney', 'courtDates', 'ledgerEntries']);
+
+        if ($request->user()->role === 'associate') {
+            $query->where('assigned_attorney_id', $request->user()->id);
+        }
+
+        $cases = $query->get();
 
         $caseSummaries = $cases->map(function (LegalCase $case) {
             $trialDateCount    = $case->courtDates->where('type', 'trial_date')->count();

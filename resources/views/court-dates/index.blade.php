@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between w-full">
-            <h2 class="heading-display !text-3xl text-slate-800">Court Schedule</h2>
+            <h2 class="heading-display !text-3xl text-slate-800">{{ __('Court Schedule') }}</h2>
             <a href="{{ route('court-dates.create') }}" class="btn-primary">
                 <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                Schedule Appearance
+                {{ __('Schedule Appearance') }}
             </a>
         </div>
     </x-slot>
@@ -26,13 +26,13 @@
         <div class="lg:col-span-3">
             <div class="glass-card overflow-hidden">
                 <div class="p-6 border-b border-slate-200/60 bg-white/50 backdrop-blur-sm flex items-center justify-between">
-                    <h3 class="heading-section !text-lg">Upcoming Dates</h3>
+                    <h3 class="heading-section !text-lg">{{ __('Upcoming Dates') }}</h3>
                     <div class="flex items-center gap-2">
                         <select class="input-dynamic !py-1.5 !text-sm !w-auto">
-                            <option>All Types</option>
-                            <option>Trial</option>
-                            <option>Hearing</option>
-                            <option>Motion</option>
+                            <option>{{ __('All Types') }}</option>
+                            <option>{{ __('Trial') }}</option>
+                            <option>{{ __('Hearing') }}</option>
+                            <option>{{ __('Motion') }}</option>
                         </select>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                                     </svg>
-                                                    {{ $date->location ?? 'Court Room' }}
+                                                    {{ $date->location ?? __('Court Room') }}
                                                 </span>
                                             </div>
                                         </div>
@@ -110,11 +110,11 @@
                                                 </svg>
                                             </div>
                                             <div>
-                                                <div class="text-sm font-medium text-slate-800">{{ $date->legalCase->title }}</div>
+                                                <div class="text-sm font-medium text-slate-800">{{ $date->legalCase->display_name }}</div>
                                                 <div class="text-xs text-indigo-600 font-mono mt-0.5">LEX-{{ $date->legalCase->created_at->format('Y') }}-{{ str_pad($date->legalCase->id, 3, '0', STR_PAD_LEFT) }}</div>
                                             </div>
                                         </div>
-                                        <a href="{{ route('cases.show', $date->legalCase) }}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">View Case &rarr;</a>
+                                        <a href="{{ route('cases.show', $date->legalCase) }}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">{{ __('View Case') }} &rarr;</a>
                                     </div>
                                     @endif
                                     
@@ -130,8 +130,8 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-medium text-slate-900">No scheduled dates</h3>
-                                <p class="mt-1 text-slate-500">Your calendar is clear.</p>
+                                <h3 class="text-lg font-medium text-slate-900">{{ __('No scheduled dates') }}</h3>
+                                <p class="mt-1 text-slate-500">{{ __('Your calendar is clear.') }}</p>
                             </div>
                         @endforelse
                     </div>
@@ -143,38 +143,113 @@
 
         <!-- Mini Calendar Widget -->
         <div class="lg:col-span-1">
-            <div class="glass-card p-6 border border-white/50 sticky top-24">
-                <h3 class="heading-section !text-lg mb-4">{{ now()->format('F Y') }}</h3>
+            <div
+                class="glass-card p-6 border border-white/50 sticky top-24 z-20"
+                x-data="{
+                    tipDay: null,
+                    tipLabel: '',
+                    tipEvents: [],
+                    show(day, label, events) {
+                        this.tipDay = day;
+                        this.tipLabel = label;
+                        this.tipEvents = events;
+                    },
+                    hide(day) {
+                        if (this.tipDay === day) {
+                            this.tipDay = null;
+                            this.tipLabel = '';
+                            this.tipEvents = [];
+                        }
+                    }
+                }"
+            >
+                <h3 class="heading-section !text-lg mb-4">{{ now()->translatedFormat('F Y') }}</h3>
                 <div class="grid grid-cols-7 gap-1 text-center mb-2">
                     @foreach(['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'] as $day)
-                        <div class="text-xs font-semibold text-slate-400 py-1">{{ $day }}</div>
+                        <div class="text-xs font-semibold text-slate-400 py-1">{{ __($day) }}</div>
                     @endforeach
                 </div>
                 <div class="grid grid-cols-7 gap-1 text-center">
                     @php
-                        $start = now()->startOfMonth()->startOfWeek();
-                        $end = now()->endOfMonth()->endOfWeek();
+                        $start = now()->copy()->startOfMonth()->startOfWeek(\Carbon\Carbon::MONDAY);
+                        $end = now()->copy()->endOfMonth()->endOfWeek(\Carbon\Carbon::SUNDAY);
                         $current = $start->copy();
+                        $calendarDates = $calendarDates ?? collect();
                     @endphp
                     @while($current <= $end)
                         @php
+                            $dayKey = $current->toDateString();
+                            $dayEvents = collect($calendarDates->get($dayKey, []));
+                            $hasEvent = $dayEvents->isNotEmpty();
                             $isCurrentMonth = $current->month == now()->month;
                             $isToday = $current->isToday();
-                            // Very simple mock logic for dots, ideally pass an array of dates from controller
-                            $hasEvent = $isCurrentMonth && ($current->day % 7 == 0 || $current->day % 11 == 0); 
+                            $dayLabel = $current->translatedFormat('D, M j');
+                            $tipPayload = $dayEvents->map(fn ($event) => [
+                                'time' => $event->date->format('g:i A'),
+                                'type' => $event->type === 'trial_date' ? __('Trial Date') : __('Calling Date'),
+                                'is_trial' => $event->type === 'trial_date',
+                                'case' => $event->legalCase?->display_name ?? __('Unknown Client'),
+                            ])->values()->all();
                         @endphp
-                        <div class="relative py-1.5 flex justify-center">
-                            <span class="w-7 h-7 flex items-center justify-center rounded-full text-sm
-                                {{ !$isCurrentMonth ? 'text-slate-300' : 'text-slate-700' }}
-                                {{ $isToday ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-500/30' : 'hover:bg-slate-100 cursor-pointer' }}">
+                        <div
+                            class="relative py-1.5 flex justify-center"
+                            @if($hasEvent)
+                                data-calendar-day="{{ $dayKey }}"
+                                tabindex="0"
+                                @mouseenter='show(@json($dayKey), @json($dayLabel), @json($tipPayload))'
+                                @mouseleave='hide(@json($dayKey))'
+                                @focus='show(@json($dayKey), @json($dayLabel), @json($tipPayload))'
+                                @blur='hide(@json($dayKey))'
+                            @endif
+                        >
+                            <span
+                                class="w-7 h-7 flex items-center justify-center rounded-full text-sm transition-colors
+                                    {{ !$isCurrentMonth ? 'text-slate-300' : 'text-slate-700' }}
+                                    {{ $isToday ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-500/30' : '' }}
+                                    {{ $hasEvent && !$isToday ? 'font-semibold text-indigo-700 hover:bg-indigo-50 cursor-help' : '' }}
+                                    {{ !$hasEvent && !$isToday ? 'hover:bg-slate-100' : '' }}"
+                                :class="tipDay === @js($dayKey) && !@js($isToday) ? 'bg-indigo-50 ring-2 ring-indigo-200' : ''"
+                            >
                                 {{ $current->day }}
                             </span>
-                            @if($hasEvent && !$isToday)
-                                <span class="absolute bottom-0 w-1 h-1 rounded-full bg-sky-500"></span>
+                            @if($hasEvent)
+                                <span class="absolute bottom-0.5 w-1 h-1 rounded-full {{ $isToday ? 'bg-white' : 'bg-sky-500' }}"></span>
                             @endif
                         </div>
                         @php $current->addDay(); @endphp
                     @endwhile
+                </div>
+
+                <div
+                    x-show="tipDay !== null"
+                    x-cloak
+                    x-transition:enter="transition ease-out duration-150"
+                    x-transition:enter-start="opacity-0 -translate-y-1"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-100"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-1"
+                    class="mt-4"
+                    data-calendar-tooltip-panel
+                >
+                    <div class="rounded-xl bg-slate-900 text-white shadow-lg ring-1 ring-white/10 p-3 text-left">
+                        <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2" x-text="tipLabel"></div>
+                        <ul class="space-y-2.5">
+                            <template x-for="(event, index) in tipEvents" :key="index">
+                                <li class="min-w-0">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="text-[11px] font-medium text-slate-300 tabular-nums" x-text="event.time"></span>
+                                        <span
+                                            class="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+                                            :class="event.is_trial ? 'bg-red-500/20 text-red-200' : 'bg-sky-500/20 text-sky-200'"
+                                            x-text="event.type"
+                                        ></span>
+                                    </div>
+                                    <div class="text-xs text-white/90 truncate mt-0.5" x-text="event.case" :title="event.case"></div>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

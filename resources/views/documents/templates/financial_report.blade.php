@@ -139,7 +139,7 @@
                 <td><strong>{{ $caseRef }}</strong></td>
                 <td>{{ $case->client->name ?? '—' }}</td>
                 <td>{{ $case->assignedAttorney->name ?? '—' }}</td>
-                <td>{{ $case->case_type ?: 'General Legal' }}</td>
+                <td>{{ $case->display_name }}</td>
                 <td class="center"><span class="status {{ $sCls }}">{{ str_replace('_', ' ', ucfirst($case->status)) }}</span></td>
                 <td class="center">{{ $item['trial_date_count'] }}</td>
                 <td class="right">{{ number_format($item['appearance_fee'], 2) }}</td>

@@ -18,17 +18,20 @@
                 <div class="hidden sm:flex sm:space-x-1">
                     @php
                         $navLinks = [
-                            ['route' => 'dashboard', 'label' => 'Dashboard'],
-                            ['route' => 'cases.index', 'label' => 'Cases'],
-                            ['route' => 'documents.index', 'label' => 'Documents'],
-                            ['route' => 'court-dates.index', 'label' => 'Scheduling'],
-                            ['route' => 'clients.index', 'label' => 'Clients'],
+                            ['route' => 'dashboard', 'label' => __('Dashboard')],
+                            ['route' => 'cases.index', 'label' => __('Cases')],
+                            ['route' => 'documents.index', 'label' => __('Documents')],
+                            ['route' => 'court-dates.index', 'label' => __('Scheduling')],
+                            ['route' => 'clients.index', 'label' => __('Clients')],
                         ];
                         if (auth()->user() && auth()->user()->can('view-financials')) {
-                            $navLinks[] = ['route' => 'billing.index', 'label' => 'Billing'];
+                            $navLinks[] = ['route' => 'billing.index', 'label' => __('Billing')];
+                        }
+                        if (auth()->user() && auth()->user()->role === 'partner') {
+                            $navLinks[] = ['route' => 'billing.firm-income', 'label' => __('Firm Income')];
                         }
                         if (auth()->user() && auth()->user()->can('manage-users')) {
-                            $navLinks[] = ['route' => 'users.index', 'label' => 'Users'];
+                            $navLinks[] = ['route' => 'users.index', 'label' => __('Users')];
                         }
                     @endphp
 
@@ -51,7 +54,40 @@
             </div>
 
             <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden sm:flex sm:items-center sm:ms-6 sm:gap-2">
+                @php
+                    $locales = ['en' => 'English', 'si' => 'සිංහල', 'ta' => 'தமிழ்'];
+                @endphp
+                <x-dropdown align="right" width="w-40">
+                    <x-slot name="trigger">
+                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-xl text-slate-600 bg-white/50 hover:bg-white/80 hover:text-slate-900 focus:outline-none transition ease-in-out duration-200">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                            </svg>
+                            <span>{{ $locales[app()->getLocale()] ?? 'English' }}</span>
+                            <div class="ms-1">
+                                <svg class="fill-current h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </button>
+                    </x-slot>
+
+                    <x-slot name="content">
+                        @foreach($locales as $code => $label)
+                            <form method="POST" action="{{ route('locale.update') }}">
+                                @csrf
+                                <input type="hidden" name="locale" value="{{ $code }}">
+                                <button type="submit"
+                                        class="w-full text-start block px-4 py-2 text-sm transition-colors
+                                               {{ app()->getLocale() === $code ? 'font-bold text-indigo-600 bg-indigo-50' : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600' }}">
+                                    {{ $label }}
+                                </button>
+                            </form>
+                        @endforeach
+                    </x-slot>
+                </x-dropdown>
+
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-xl text-slate-600 bg-white/50 hover:bg-white/80 hover:text-slate-900 focus:outline-none transition ease-in-out duration-200">
@@ -121,6 +157,22 @@
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>
                 </form>
+            </div>
+        </div>
+        <div class="pt-4 pb-3 border-t border-slate-200/50">
+            <div class="px-4 mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{{ __('Language') }}</div>
+            <div class="px-4 flex items-center gap-2">
+                @foreach($locales as $code => $label)
+                    <form method="POST" action="{{ route('locale.update') }}">
+                        @csrf
+                        <input type="hidden" name="locale" value="{{ $code }}">
+                        <button type="submit"
+                                class="px-3 py-1.5 text-sm rounded-lg border transition-colors
+                                       {{ app()->getLocale() === $code ? 'font-bold text-indigo-600 bg-indigo-50 border-indigo-200' : 'text-slate-600 border-slate-200 hover:bg-slate-50' }}">
+                            {{ $label }}
+                        </button>
+                    </form>
+                @endforeach
             </div>
         </div>
     </div>

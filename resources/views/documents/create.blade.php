@@ -25,14 +25,23 @@
                             <select id="case_id" name="case_id"
                                 class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                 required>
-                                <option value="">— Select a case —</option>
+                                <option value="">{{ __('— Select a case —') }}</option>
                                 @foreach ($cases as $case)
                                     <option value="{{ $case->id }}" @selected(old('case_id') == $case->id)>
-                                        Case #{{ $case->id }} — {{ $case->client->name ?? 'N/A' }} ({{ ucfirst($case->case_type ?? 'N/A') }})
+                                        {{ $case->display_name }}
                                     </option>
                                 @endforeach
                             </select>
                             <x-input-error :messages="$errors->get('case_id')" class="mt-2" />
+                        </div>
+
+                        {{-- Document Name --}}
+                        <div class="mb-6">
+                            <x-input-label for="name" :value="__('Document Name')" />
+                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full"
+                                :value="old('name')" placeholder="{{ __('Optional — defaults to filename when uploading a single file') }}" />
+                            <p class="mt-1 text-xs text-gray-500">{{ __('When uploading multiple files, each document uses its original filename.') }}</p>
+                            <x-input-error :messages="$errors->get('name')" class="mt-2" />
                         </div>
 
                         {{-- File Upload --}}
@@ -40,7 +49,7 @@
                             <div class="flex items-center justify-between mb-2">
                                 <x-input-label :value="__('Document Files')" />
                                 <button type="button" id="add-file-btn" class="text-sm text-indigo-600 hover:text-indigo-900 font-medium">
-                                    + Add another file
+                                    + {{ __('Add another file') }}
                                 </button>
                             </div>
                             
@@ -62,7 +71,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <p class="mt-2 text-xs text-gray-500">Accepted formats: PDF, JPG, PNG. <span class="font-medium">25MB max per file</span>. You can select multiple files at once or add more inputs.</p>
+                            <p class="mt-2 text-xs text-gray-500">{{ __('Accepted formats: PDF, JPG, PNG.') }} <span class="font-medium">{{ __('25MB max per file') }}</span>. {{ __('You can select multiple files at once or add more inputs.') }}</p>
                             <x-input-error :messages="$errors->get('documents')" class="mt-2" />
                             <x-input-error :messages="$errors->get('documents.*')" class="mt-2" />
                         </div>
@@ -73,7 +82,7 @@
                             <select id="category" name="category"
                                 class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                 required>
-                                <option value="">— Select a category —</option>
+                                <option value="">{{ __('— Select a category —') }}</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category }}" @selected(old('category') === $category)>
                                         {{ ucfirst($category) }}

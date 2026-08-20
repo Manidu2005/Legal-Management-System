@@ -33,6 +33,14 @@
                             <x-input-error :messages="$errors->get('client_id')" class="mt-2" />
                         </div>
 
+                        {{-- Case Name --}}
+                        <div>
+                            <x-input-label for="name" :value="__('Case Name')" />
+                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full"
+                                :value="old('name')" placeholder="{{ __('Optional — e.g. Smith v. Jones') }}" />
+                            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                        </div>
+
                         {{-- Assigned Attorney --}}
                         <div>
                             <x-input-label for="assigned_attorney_id" :value="__('Assigned Attorney')" />
@@ -54,26 +62,26 @@
                             <x-input-label for="case_type" :value="__('Case Type')" />
                             <select id="case_type" name="case_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                 <option value="" disabled selected>{{ __('Select case type...') }}</option>
-                                <optgroup label="Civil Law">
-                                    <option value="Civil - Breach of Contract" @selected(old('case_type') == 'Civil - Breach of Contract')>Breach of Contract</option>
-                                    <option value="Civil - Defamation" @selected(old('case_type') == 'Civil - Defamation')>Defamation</option>
-                                    <option value="Civil - Money Recovery" @selected(old('case_type') == 'Civil - Money Recovery')>Money Recovery</option>
+                                <optgroup label="{{ __('Civil Law') }}">
+                                    <option value="Civil - Breach of Contract" @selected(old('case_type') == 'Civil - Breach of Contract')>{{ __('Breach of Contract') }}</option>
+                                    <option value="Civil - Defamation" @selected(old('case_type') == 'Civil - Defamation')>{{ __('Defamation') }}</option>
+                                    <option value="Civil - Money Recovery" @selected(old('case_type') == 'Civil - Money Recovery')>{{ __('Money Recovery') }}</option>
                                 </optgroup>
-                                <optgroup label="Criminal Law">
-                                    <option value="Criminal - Fraud & Forgery" @selected(old('case_type') == 'Criminal - Fraud & Forgery')>Fraud & Forgery</option>
-                                    <option value="Criminal - Assault" @selected(old('case_type') == 'Criminal - Assault')>Assault</option>
-                                    <option value="Criminal - Narcotics" @selected(old('case_type') == 'Criminal - Narcotics')>Narcotics</option>
+                                <optgroup label="{{ __('Criminal Law') }}">
+                                    <option value="Criminal - Fraud & Forgery" @selected(old('case_type') == 'Criminal - Fraud & Forgery')>{{ __('Fraud & Forgery') }}</option>
+                                    <option value="Criminal - Assault" @selected(old('case_type') == 'Criminal - Assault')>{{ __('Assault') }}</option>
+                                    <option value="Criminal - Narcotics" @selected(old('case_type') == 'Criminal - Narcotics')>{{ __('Narcotics') }}</option>
                                 </optgroup>
-                                <optgroup label="Property & Land">
-                                    <option value="Property - Partition Cases" @selected(old('case_type') == 'Property - Partition Cases')>Partition Cases</option>
-                                    <option value="Property - Land Eviction" @selected(old('case_type') == 'Property - Land Eviction')>Land Eviction</option>
+                                <optgroup label="{{ __('Property & Land') }}">
+                                    <option value="Property - Partition Cases" @selected(old('case_type') == 'Property - Partition Cases')>{{ __('Partition Cases') }}</option>
+                                    <option value="Property - Land Eviction" @selected(old('case_type') == 'Property - Land Eviction')>{{ __('Land Eviction') }}</option>
                                 </optgroup>
-                                <optgroup label="Family Law">
-                                    <option value="Family - Divorce" @selected(old('case_type') == 'Family - Divorce')>Divorce</option>
-                                    <option value="Family - Child Custody" @selected(old('case_type') == 'Family - Child Custody')>Child Custody</option>
+                                <optgroup label="{{ __('Family Law') }}">
+                                    <option value="Family - Divorce" @selected(old('case_type') == 'Family - Divorce')>{{ __('Divorce') }}</option>
+                                    <option value="Family - Child Custody" @selected(old('case_type') == 'Family - Child Custody')>{{ __('Child Custody') }}</option>
                                 </optgroup>
-                                <optgroup label="Other">
-                                    <option value="Other" @selected(old('case_type') == 'Other')>Other</option>
+                                <optgroup label="{{ __('Other') }}">
+                                    <option value="Other" @selected(old('case_type') == 'Other')>{{ __('Other') }}</option>
                                 </optgroup>
                             </select>
                             <x-input-error :messages="$errors->get('case_type')" class="mt-2" />
@@ -85,11 +93,11 @@
                             <select id="status" name="status"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     required>
-                                <option value="pending" @selected(old('status', 'pending') === 'pending')>Pending</option>
-                                <option value="active" @selected(old('status') === 'active')>Active</option>
-                                <option value="trial_scheduled" @selected(old('status') === 'trial_scheduled')>Trial Scheduled</option>
-                                <option value="judgment_delivered" @selected(old('status') === 'judgment_delivered')>Judgment Delivered</option>
-                                <option value="case_closed" @selected(old('status') === 'case_closed')>Case Closed</option>
+                                <option value="pending" @selected(old('status', 'pending') === 'pending')>{{ __('Pending') }}</option>
+                                <option value="active" @selected(old('status') === 'active')>{{ __('Active') }}</option>
+                                <option value="trial_scheduled" @selected(old('status') === 'trial_scheduled')>{{ __('Trial Scheduled') }}</option>
+                                <option value="judgment_delivered" @selected(old('status') === 'judgment_delivered')>{{ __('Judgment Delivered') }}</option>
+                                <option value="case_closed" @selected(old('status') === 'case_closed')>{{ __('Case Closed') }}</option>
                             </select>
                             <x-input-error :messages="$errors->get('status')" class="mt-2" />
                         </div>

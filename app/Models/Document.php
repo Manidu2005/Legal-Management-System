@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,7 @@ class Document extends Model
 
     protected $fillable = [
         'case_id',
+        'name',
         'file_path',
         'file_type',
         'category',
@@ -26,6 +28,20 @@ class Document extends Model
 
     /** Valid document categories. */
     public const CATEGORIES = ['evidence', 'deeds', 'correspondence'];
+
+    /**
+     * Human-readable label: custom name, or the original uploaded filename.
+     */
+    protected function displayName(): Attribute
+    {
+        return Attribute::get(function (): string {
+            if (! empty($this->name)) {
+                return $this->name;
+            }
+
+            return basename($this->file_path);
+        });
+    }
 
     /**
      * The case this document belongs to.

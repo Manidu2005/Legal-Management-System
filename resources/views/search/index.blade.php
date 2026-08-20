@@ -19,7 +19,7 @@
                                 </svg>
                             </div>
                             <input type="text" name="q" value="{{ $query }}"
-                                placeholder="Search clients, cases, or documents..."
+                                placeholder="{{ __('Search clients, cases, or documents...') }}"
                                 class="block w-full ps-12 pe-4 py-3 text-base border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm"
                                 autofocus />
                         </div>
@@ -39,12 +39,12 @@
                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                             </svg>
-                            <h3 class="mt-2 text-sm font-semibold text-gray-900">No results found</h3>
-                            <p class="mt-1 text-sm text-gray-500">No matches for "<span class="font-medium">{{ $query }}</span>". Try a different search term.</p>
+                            <h3 class="mt-2 text-sm font-semibold text-gray-900">{{ __('No results found') }}</h3>
+                            <p class="mt-1 text-sm text-gray-500">{{ __('No matches for ":query". Try a different search term.', ['query' => $query]) }}</p>
                         </div>
                     </div>
                 @else
-                    <p class="text-sm text-gray-500 mb-6">Found {{ $totalResults }} result(s) for "<span class="font-medium text-gray-700">{{ $query }}</span>"</p>
+                    <p class="text-sm text-gray-500 mb-6">{{ __('Found :count result(s) for ":query"', ['count' => $totalResults, 'query' => $query]) }}</p>
 
                     {{-- Clients --}}
                     @if ($clients->isNotEmpty())
@@ -54,16 +54,16 @@
                                     <svg class="w-5 h-5 me-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                                     </svg>
-                                    Clients
+                                    {{ __('Clients') }}
                                     <span class="ms-2 text-sm font-normal text-gray-500">({{ $clients->count() }})</span>
                                 </h3>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
                                             <tr>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIC</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Name') }}</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('NIC') }}</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Phone') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
@@ -89,23 +89,23 @@
                                     <svg class="w-5 h-5 me-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                                     </svg>
-                                    Cases
+                                    {{ __('Cases') }}
                                     <span class="ms-2 text-sm font-normal text-gray-500">({{ $cases->count() }})</span>
                                 </h3>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
                                             <tr>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Case Name') }}</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Client') }}</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Type') }}</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Status') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
                                             @foreach ($cases as $case)
                                                 <tr class="hover:bg-gray-50">
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">#{{ $case->id }}</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">{{ $case->display_name }}</td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $case->client->name ?? '—' }}</td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ucfirst($case->case_type ?? '—') }}</td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
@@ -119,7 +119,7 @@
                                                             ];
                                                         @endphp
                                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$case->status] ?? 'bg-gray-100 text-gray-800' }}">
-                                                            {{ ucfirst(str_replace('_', ' ', $case->status ?? '—')) }}
+                                                            {{ $case->status ? __(ucfirst(str_replace('_', ' ', $case->status))) : '—' }}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -139,16 +139,16 @@
                                     <svg class="w-5 h-5 me-2 text-rose-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                                     </svg>
-                                    Documents
+                                    {{ __('Documents') }}
                                     <span class="ms-2 text-sm font-normal text-gray-500">({{ $documents->count() }})</span>
                                 </h3>
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
                                             <tr>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Case</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Name') }}</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Case') }}</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Category') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
@@ -156,12 +156,12 @@
                                                 <tr class="hover:bg-gray-50">
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                         <a href="{{ route('documents.show', $document) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">
-                                                            {{ basename($document->file_path) }}
+                                                            {{ $document->display_name }}
                                                         </a>
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                         @if ($document->legalCase)
-                                                            Case #{{ $document->legalCase->id }} — {{ $document->legalCase->client->name ?? '' }}
+                                                            {{ $document->legalCase->display_name }}
                                                         @else
                                                             —
                                                         @endif

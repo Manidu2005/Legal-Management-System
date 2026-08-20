@@ -92,6 +92,9 @@ Use `LegalCase::MILESTONE_STATUSES` constant in code.
 **Helper methods:**
 - `trialDateCount()` → count of `court_dates` where `type = 'trial_date'`
 - `totalAppearanceFee()` → `trialDateCount() × assignedAttorney.flat_appearance_rate`
+- `display_name` accessor → returns `name` when set, otherwise `"{client.name} — {case_type}"`
+
+**Document rename gap:** The documents resource excludes `edit`/`update` routes (`routes/documents.php`). Document names can only be set at upload time (single-file uploads). Post-upload rename is not yet implemented.
 
 ---
 
@@ -138,6 +141,9 @@ Use `LegalCase::MILESTONE_STATUSES` constant in code.
 **Relationships:**
 - `legalCase()` → belongsTo `LegalCase` (FK: `case_id`)
 - `uploader()` → belongsTo `User` (FK: `uploaded_by`)
+
+**Helper methods:**
+- `display_name` accessor → returns `name` when set, otherwise the original uploaded filename (`basename(file_path)`)
 
 ---
 
@@ -209,6 +215,68 @@ $this->authorize('view-financials');
     {{-- User management content here --}}
 @endcan
 ```
+
+### Policies
+
+Defined in `App\Policies\` and registered in `App\Providers\AppServiceProvider::boot()` via `Gate::policy()`.
+
+| Policy | Registered For | Abilities |
+|--------|-----------------|-----------|
+| `CaseAccessPolicy` | `App\Models\LegalCase` | `view`, `manageAccessCode` |
+
+**`CaseAccessPolicy::view(User $user, LegalCase $case)`**
+
+| Role | Rule |
+|------|------|
+| `partner` | Always `true` — unrestricted access to every case. |
+| `associate` | `true` only if `$case->assigned_attorney_id === $user->id`. |
+| `clerk` | `true` only if the case has an access code configured **and** the clerk has verified it for this case in the current session. See "Case Access Codes" below. |
+
+**`CaseAccessPolicy::manageAccessCode(User $user, LegalCase $case)`** — governs who may set/change a case's access code.
+
+| Role | Rule |
+|------|------|
+| `partner` | Always `true`. |
+| `associate` | `true` only if assigned to that case. |
+| `clerk` | Always `false` — a verified clerk gains `view` rights only, never the ability to manage the code. |
+
+**Usage in controllers:**
+```php
+$this->authorize('view', $case);
+$this->authorize('manageAccessCode', $case);
+```
+
+**Usage in Blade views:**
+```blade
+@can('manageAccessCode', $case)
+    {{-- Access code set/change form --}}
+@endcan
+```
+
+`LegalCaseController` and `DocumentController` both use `App\Http\Controllers\Concerns\EnsuresCaseAccessCode`, which redirects an unverified clerk to the code-entry form instead of surfacing a bare 403 when a case's `view` check would otherwise fail solely due to a missing session verification.
+
+**Important:** `LegalCaseController::edit()` and `update()` additionally hard-block the `clerk` role before ever consulting the policy. Do not rely on `authorize('view', $case)` alone to gate edit/update actions — a code-verified clerk legitimately passes `view`, but must never be allowed to edit or update a case.
+
+### Case Access Codes (Phase 1b)
+
+Each case may have an optional access code, stored only as a bcrypt hash (`legal_cases.access_code_hash`). The raw code is **never** persisted, logged, or serialized (the column is in `LegalCase::$hidden`).
+
+**Model helpers** (`App\Models\LegalCase`):
+- `hasAccessCode(): bool` — whether a code is configured.
+- `setAccessCode(string $code): void` — hashes and saves a new/changed code.
+- `verifyAccessCode(string $code): bool` — checks a raw code against the stored hash.
+
+**Who can set/change a code:** a partner, or the associate assigned to that specific case — enforced by `CaseAccessPolicy::manageAccessCode`. A small form on the case edit view (`resources/views/cases/edit.blade.php`), gated by `@can('manageAccessCode', $case)`, posts to `PATCH /cases/{case}/access-code`.
+
+**Clerk verification flow:**
+1. A clerk requesting a case (`cases.show`) or one of its documents (`documents.show`/`download`/`preview`) whose case has a code configured, and which hasn't been verified this session, is redirected to `GET /cases/{case}/access-code`.
+2. Submitting the correct code (`POST /cases/{case}/access-code`, throttled `5,1`) sets `session("case_access_verified.{$case->id}", true)` and redirects back into the case (or the originally requested document, if any).
+3. For the rest of that session, `CaseAccessPolicy::view()` returns `true` for that clerk/case pair — no need to re-enter the code.
+4. If a case has **no** access code configured, a clerk is denied outright (redirected nowhere — there's nothing to verify — and the normal policy check 403s).
+
+**Session keys used:**
+- `case_access_verified.{case_id}` — `true` once a clerk has verified the code for that case this session.
+- `case_access_intended.{case_id}` — transient, holds the originally requested URL so the clerk lands back where they meant to go after verifying.
 
 ### Suspended User Handling
 

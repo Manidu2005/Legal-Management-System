@@ -9,6 +9,9 @@ class LedgerEntryController extends Controller
 {
     /**
      * Store a new ledger entry.
+     *
+     * Authorization is handled by StoreLedgerEntryRequest::authorize(),
+     * which checks the user can view the target case via CaseAccessPolicy.
      */
     public function store(StoreLedgerEntryRequest $request)
     {
@@ -27,9 +30,14 @@ class LedgerEntryController extends Controller
 
     /**
      * Delete a ledger entry.
+     *
+     * Associates may only delete entries on their own assigned cases.
+     * Partners may delete entries on any case.
      */
     public function destroy(LedgerEntry $ledgerEntry)
     {
+        $this->authorize('view', $ledgerEntry->legalCase);
+
         $caseId = $ledgerEntry->case_id;
 
         $ledgerEntry->delete();

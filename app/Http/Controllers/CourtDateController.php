@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCourtDateRequest;
 use App\Models\CourtDate;
 use App\Models\LegalCase;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -31,17 +32,16 @@ class CourtDateController extends Controller
         // Group past by month (most recent first)
         $pastByMonth = $past->sortByDesc('date')->groupBy(fn ($cd) => $cd->date->format('F Y'));
 
-        // Build a simple calendar grid for the current month
+        // Build a simple calendar grid for the current month (Mon–Sun, including pad days)
         $currentMonth = now();
         $daysInMonth = $currentMonth->daysInMonth;
         $firstDayOfWeek = $currentMonth->copy()->startOfMonth()->dayOfWeek; // 0=Sunday
 
-        // Get court dates for this month for calendar highlighting
-        $monthStart = $currentMonth->copy()->startOfMonth();
-        $monthEnd = $currentMonth->copy()->endOfMonth();
-        $calendarDates = $courtDates->filter(function ($cd) use ($monthStart, $monthEnd) {
-            return $cd->date->between($monthStart, $monthEnd);
-        })->groupBy(fn ($cd) => $cd->date->format('j'));
+        $gridStart = $currentMonth->copy()->startOfMonth()->startOfWeek(Carbon::MONDAY);
+        $gridEnd = $currentMonth->copy()->endOfMonth()->endOfWeek(Carbon::SUNDAY);
+        $calendarDates = $courtDates
+            ->filter(fn ($cd) => $cd->date->between($gridStart, $gridEnd))
+            ->groupBy(fn ($cd) => $cd->date->toDateString());
 
         return view('court-dates.index', compact(
             'upcomingByMonth',

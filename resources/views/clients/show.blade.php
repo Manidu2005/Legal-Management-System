@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between w-full">
             <div class="flex items-center gap-4">
                 <a href="{{ route('clients.index') }}" class="text-sm text-gray-500 hover:text-gray-700 underline">
-                    ← Back to Clients
+                    ← {{ __('Back to Clients') }}
                 </a>
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                     {{ $client->name }}
@@ -46,30 +46,30 @@
                             </div>
                         @endif
                         <div class="flex-1">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Client Information</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Client Information') }}</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">NIC</dt>
+                            <dt class="text-sm font-medium text-gray-500">{{ __('NIC') }}</dt>
                             <dd class="mt-1 text-sm text-gray-900 font-mono font-semibold">{{ $client->nic }}</dd>
                         </div>
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Full Name</dt>
+                            <dt class="text-sm font-medium text-gray-500">{{ __('Full Name') }}</dt>
                             <dd class="mt-1 text-sm text-gray-900">{{ $client->name }}</dd>
                         </div>
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Phone</dt>
+                            <dt class="text-sm font-medium text-gray-500">{{ __('Phone') }}</dt>
                             <dd class="mt-1 text-sm text-gray-900">{{ $client->phone ?? '—' }}</dd>
                         </div>
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Email</dt>
+                            <dt class="text-sm font-medium text-gray-500">{{ __('Email') }}</dt>
                             <dd class="mt-1 text-sm text-gray-900">{{ $client->email ?? '—' }}</dd>
                         </div>
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Intake Date</dt>
+                            <dt class="text-sm font-medium text-gray-500">{{ __('Intake Date') }}</dt>
                             <dd class="mt-1 text-sm text-gray-900">{{ $client->intake_date->format('d M Y') }}</dd>
                         </div>
                         <div>
-                            <dt class="text-sm font-medium text-gray-500">Total Cases</dt>
+                            <dt class="text-sm font-medium text-gray-500">{{ __('Total Cases') }}</dt>
                             <dd class="mt-1">
                                 <span class="inline-flex items-center rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800">
                                     {{ $client->cases->count() }}
@@ -86,7 +86,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Cases</h3>
+                        <h3 class="text-lg font-semibold text-gray-900">{{ __('Cases') }}</h3>
                         {{-- New Case button (links to case creation with pre-filled client) --}}
                         <a href="{{ route('cases.create', ['client_id' => $client->id]) }}">
                             <x-primary-button>
@@ -102,18 +102,18 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Case ID</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned Attorney</th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Case Name') }}</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Type') }}</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Status') }}</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Assigned Attorney') }}</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($client->cases as $case)
                                     <tr class="hover:bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            #{{ $case->id }}
+                                            {{ $case->display_name }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $case->case_type }}
@@ -130,14 +130,14 @@
                                                 $colorClass = $statusColors[$case->status] ?? 'bg-gray-100 text-gray-800';
                                             @endphp
                                             <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {{ $colorClass }}">
-                                                {{ str_replace('_', ' ', ucfirst($case->status)) }}
+                                                {{ __(str_replace('_', ' ', ucfirst($case->status))) }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $case->assignedAttorney->name ?? '—' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <a href="{{ route('cases.show', $case) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
+                                            <a href="{{ route('cases.show', $case) }}" class="text-indigo-600 hover:text-indigo-900">{{ __('View') }}</a>
                                         </td>
                                     </tr>
                                 @empty
@@ -146,8 +146,8 @@
                                             <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                                             </svg>
-                                            <p>No cases found for this client.</p>
-                                            <p class="mt-1 text-gray-400">Create a new case to get started.</p>
+                                            <p>{{ __('No cases found for this client.') }}</p>
+                                            <p class="mt-1 text-gray-400">{{ __('Create a new case to get started.') }}</p>
                                         </td>
                                     </tr>
                                 @endforelse
