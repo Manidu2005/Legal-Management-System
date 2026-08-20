@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\EnsuresCaseAccessCode;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Models\Document;
 use App\Models\LegalCase;
@@ -15,12 +16,26 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DocumentController extends Controller
 {
+    use EnsuresCaseAccessCode;
+
     /**
      * Display a listing of documents with optional filters.
      */
     public function index(Request $request): View
     {
+        $user = $request->user();
+
         $query = Document::with(['legalCase.client', 'uploader']);
+
+        $casesQuery = LegalCase::with('client');
+
+        // Associates only see documents belonging to their assigned cases
+        if ($user->role === 'associate') {
+            $query->whereHas('legalCase', function ($caseQuery) use ($user) {
+                $caseQuery->where('assigned_attorney_id', $user->id);
+            });
+            $casesQuery->where('assigned_attorney_id', $user->id);
+        }
 
         if ($request->filled('category')) {
             $query->where('category', $request->input('category'));
@@ -32,9 +47,7 @@ class DocumentController extends Controller
 
         $documents = $query->latest()->paginate(15)->withQueryString();
 
-        $cases = LegalCase::with('client')
-            ->orderBy('id', 'desc')
-            ->get();
+        $cases = $casesQuery->orderBy('id', 'desc')->get();
 
         return view('documents.index', [
             'documents' => $documents,
@@ -65,28 +78,40 @@ class DocumentController extends Controller
      */
     public function store(StoreDocumentRequest $request): RedirectResponse
     {
-        $file = $request->file('document');
-        $path = Storage::disk('public')->putFile('documents', $file);
+        $files = $request->file('documents');
 
-        Document::create([
-            'case_id' => $request->input('case_id'),
-            'file_path' => $path,
-            'file_type' => $file->getClientOriginalExtension(),
-            'category' => $request->input('category'),
-            'uploaded_by' => $request->user()->id,
-        ]);
+        $documentName = count($files) === 1 ? $request->input('name') : null;
+
+        foreach ($files as $file) {
+            $path = Storage::disk('public')->putFile('documents', $file);
+
+            Document::create([
+                'case_id' => $request->input('case_id'),
+                'name' => $documentName,
+                'file_path' => $path,
+                'file_type' => $file->getClientOriginalExtension(),
+                'category' => $request->input('category'),
+                'uploaded_by' => $request->user()->id,
+            ]);
+        }
 
         return redirect()
             ->route('documents.index')
-            ->with('success', 'Document uploaded successfully.');
+            ->with('success', count($files) . ' document(s) uploaded successfully.');
     }
 
     /**
      * Display a single document with details and preview.
      */
-    public function show(Document $document): View
+    public function show(Document $document): View|RedirectResponse
     {
         $document->load(['legalCase.client', 'uploader']);
+
+        if ($redirect = $this->redirectForCaseAccessCode($document->legalCase)) {
+            return $redirect;
+        }
+
+        $this->authorize('view', $document->legalCase);
 
         return view('documents.show', [
             'document' => $document,
@@ -98,6 +123,12 @@ class DocumentController extends Controller
      */
     public function download(Document $document): Response|RedirectResponse
     {
+        if ($redirect = $this->redirectForCaseAccessCode($document->legalCase)) {
+            return $redirect;
+        }
+
+        $this->authorize('view', $document->legalCase);
+
         if (Storage::disk('public')->exists($document->file_path)) {
             return Storage::disk('public')->download(
                 $document->file_path,
@@ -113,8 +144,14 @@ class DocumentController extends Controller
     /**
      * Preview a document file in the browser.
      */
-    public function preview(Document $document)
+    public function preview(Document $document): BinaryFileResponse|RedirectResponse
     {
+        if ($redirect = $this->redirectForCaseAccessCode($document->legalCase)) {
+            return $redirect;
+        }
+
+        $this->authorize('view', $document->legalCase);
+
         if (Storage::disk('public')->exists($document->file_path)) {
             $path = Storage::disk('public')->path($document->file_path);
             $mimeType = Storage::disk('public')->mimeType($document->file_path);

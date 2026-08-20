@@ -145,6 +145,11 @@ class DatabaseSeeder extends Seeder
             'status' => 'case_closed',
         ]);
 
+        // Demo access code (Phase 1b): Case 1 requires a code before a
+        // clerk can view it or its documents. Case 2 has none configured,
+        // so a clerk is denied outright — no code to enter.
+        $case1->setAccessCode('247100');
+
         // ─── Module 2: Court Dates ─────────────────────────────────
         // Case 1 — active civil litigation
         CourtDate::create([

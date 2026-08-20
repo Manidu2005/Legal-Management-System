@@ -24,11 +24,12 @@ class UpdateClientRequest extends FormRequest
         $clientId = $this->route('client')->id;
 
         return [
-            'name' => 'required|string|max:255',
-            'nic' => 'required|string|max:20|unique:clients,nic,' . $clientId,
-            'phone' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:255',
-            'intake_date' => 'required|date',
+            'name'        => 'required|string|max:255',
+            'nic'         => ['required', 'string', 'regex:/^(\d{12}|\d{9}[Vv])$/', 'unique:clients,nic,' . $clientId],
+            'phone'       => ['nullable', 'regex:/^\d{10}$/'],
+            'email'       => 'nullable|email|max:255',
+            'image'       => 'nullable|image|max:2048',
+            'intake_date' => 'sometimes|required|date|before_or_equal:today',
         ];
     }
 
@@ -41,7 +42,10 @@ class UpdateClientRequest extends FormRequest
     {
         return [
             'nic.required' => 'NIC is required.',
-            'nic.unique' => 'A client with this NIC already exists.',
+            'nic.unique'   => 'A client with this NIC already exists.',
+            'nic.regex'    => 'NIC must be 12 digits (new format) or 9 digits followed by V (old format, e.g. 123456789V).',
+            'phone.regex'  => 'Phone number must be exactly 10 digits.',
+            'email.email'  => 'Please enter a valid email address containing @.',
         ];
     }
 }

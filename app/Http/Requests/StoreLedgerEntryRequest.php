@@ -2,18 +2,29 @@
 
 namespace App\Http\Requests;
 
+use App\Models\LegalCase;
 use App\Models\LedgerEntry;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Validator;
 
 class StoreLedgerEntryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * Associates may only create ledger entries on their own assigned cases.
+     * Partners may create entries on any case.
      */
     public function authorize(): bool
     {
-        return true;
+        $case = LegalCase::find($this->input('case_id'));
+
+        if (! $case) {
+            return false;
+        }
+
+        return Gate::allows('view', $case);
     }
 
     /**

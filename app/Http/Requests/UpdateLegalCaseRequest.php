@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\LegalCase;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateLegalCaseRequest extends FormRequest
 {
@@ -24,7 +26,8 @@ class UpdateLegalCaseRequest extends FormRequest
         return [
             'client_id' => 'required|exists:clients,id',
             'assigned_attorney_id' => 'required|exists:users,id',
-            'case_type' => 'nullable|string|max:255',
+            'name' => 'nullable|string|max:255',
+            'case_type' => ['nullable', 'string', Rule::in(LegalCase::CASE_TYPES)],
             'status' => 'required|in:pending,active,trial_scheduled,judgment_delivered,case_closed',
         ];
     }

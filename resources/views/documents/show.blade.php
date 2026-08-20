@@ -7,7 +7,7 @@
                 </svg>
             </a>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Document Details') }}
+                {{ $document->display_name }}
             </h2>
         </div>
     </x-slot>
@@ -33,22 +33,26 @@
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">File Information</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('File Information') }}</h3>
                             <dl class="space-y-3">
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500">Document ID</dt>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Document ID') }}</dt>
                                     <dd class="mt-1 text-sm text-gray-900">#{{ $document->id }}</dd>
                                 </div>
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500">File Name</dt>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Document Name') }}</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ $document->display_name }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Stored File') }}</dt>
                                     <dd class="mt-1 text-sm text-gray-900">{{ basename($document->file_path) }}</dd>
                                 </div>
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500">File Type</dt>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('File Type') }}</dt>
                                     <dd class="mt-1 text-sm text-gray-900 uppercase">{{ $document->file_type }}</dd>
                                 </div>
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500">Category</dt>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Category') }}</dt>
                                     <dd class="mt-1">
                                         @php
                                             $badgeColors = [
@@ -65,29 +69,26 @@
                             </dl>
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Related Information</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Related Information') }}</h3>
                             <dl class="space-y-3">
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500">Case</dt>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Case') }}</dt>
                                     <dd class="mt-1 text-sm">
                                         @if ($document->legalCase)
                                             <span class="text-indigo-600 font-medium">
-                                                Case #{{ $document->legalCase->id }}
+                                                {{ $document->legalCase->display_name }}
                                             </span>
-                                            @if ($document->legalCase->client)
-                                                <span class="text-gray-500"> — {{ $document->legalCase->client->name }}</span>
-                                            @endif
                                         @else
                                             <span class="text-gray-400">—</span>
                                         @endif
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500">Uploaded By</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $document->uploader->name ?? 'Unknown' }}</dd>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Uploaded By') }}</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ $document->uploader->name ?? __('Unknown') }}</dd>
                                 </div>
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500">Upload Date</dt>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Upload Date') }}</dt>
                                     <dd class="mt-1 text-sm text-gray-900">{{ $document->created_at->format('d F Y, h:i A') }}</dd>
                                 </div>
                             </dl>
@@ -118,18 +119,45 @@
                 </div>
             </div>
 
+            {{-- Related Documents Section --}}
+            @if ($document->legalCase)
+                @php
+                    $relatedDocs = $document->legalCase->documents()->where('id', '!=', $document->id)->get();
+                @endphp
+                @if ($relatedDocs->count() > 0)
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                        <div class="p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Other Documents in this Case') }}</h3>
+                            <ul class="divide-y divide-gray-200">
+                                @foreach ($relatedDocs as $relDoc)
+                                    <li class="py-3 flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <svg class="h-5 w-5 text-gray-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                            </svg>
+                                            <span class="text-sm font-medium text-gray-900">{{ $relDoc->display_name }} ({{ ucfirst($relDoc->category) }})</span>
+                                        </div>
+                                        <a href="{{ route('documents.show', $relDoc) }}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">{{ __('View') }}</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+            @endif
+
             {{-- Document Preview --}}
             @if (Storage::disk('public')->exists($document->file_path))
                 @if (strtolower($document->file_type) === 'pdf')
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Document Preview</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Document Preview') }}</h3>
                             <div class="border border-gray-200 rounded-lg overflow-hidden">
                                 <iframe
                                     src="{{ route('documents.preview', $document) }}"
                                     class="w-full"
                                     style="height: 700px;"
-                                    title="Document Preview"
+                                    title="{{ __('Document Preview') }}"
                                 ></iframe>
                             </div>
                         </div>
@@ -137,11 +165,11 @@
                 @elseif (in_array(strtolower($document->file_type), ['jpg', 'png']))
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Document Preview</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Document Preview') }}</h3>
                             <div class="border border-gray-200 rounded-lg overflow-hidden flex justify-center bg-gray-50 p-4">
                                 <img
                                     src="{{ route('documents.preview', $document) }}"
-                                    alt="Document Preview"
+                                    alt="{{ __('Document Preview') }}"
                                     class="max-w-full max-h-[700px] object-contain rounded"
                                 />
                             </div>
@@ -151,13 +179,13 @@
             @else
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Document Preview</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Document Preview') }}</h3>
                         <div class="border border-gray-200 rounded-lg overflow-hidden flex flex-col items-center justify-center bg-gray-50 p-12 text-center">
                             <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25M9 16.5v.75m3-3v3M15 12v5.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                             </svg>
-                            <h3 class="text-sm font-medium text-gray-900">Preview not available</h3>
-                            <p class="mt-1 text-sm text-gray-500">This is a seeded demo document without an actual physical file on the server.</p>
+                            <h3 class="text-sm font-medium text-gray-900">{{ __('Preview not available') }}</h3>
+                            <p class="mt-1 text-sm text-gray-500">{{ __('This is a seeded demo document without an actual physical file on the server.') }}</p>
                         </div>
                     </div>
                 </div>

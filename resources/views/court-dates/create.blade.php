@@ -27,10 +27,7 @@
                                 <option value="">{{ __('Select a case...') }}</option>
                                 @foreach ($cases as $case)
                                     <option value="{{ $case->id }}" {{ old('case_id') == $case->id ? 'selected' : '' }}>
-                                        Case #{{ $case->id }} — {{ $case->client->name ?? 'No Client' }}
-                                        @if ($case->case_type)
-                                            ({{ $case->case_type }})
-                                        @endif
+                                        {{ $case->display_name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -50,7 +47,7 @@
                         {{-- Type Selection (Card-style Radio Buttons) --}}
                         <div class="mb-6">
                             <x-input-label :value="__('Court Date Type')" />
-                            <p class="text-sm text-gray-500 mb-3">Select the type of court appearance</p>
+                            <p class="text-sm text-gray-500 mb-3">{{ __('Select the type of court appearance') }}</p>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {{-- Calling Date Card --}}
@@ -66,8 +63,8 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
                                             </svg>
                                         </div>
-                                        <span class="text-sm font-semibold text-gray-900">Calling Date</span>
-                                        <span class="text-xs text-gray-500 mt-1 text-center">Regular court appearance for case management</span>
+                                        <span class="text-sm font-semibold text-gray-900">{{ __('Calling Date') }}</span>
+                                        <span class="text-xs text-gray-500 mt-1 text-center">{{ __('Regular court appearance for case management') }}</span>
                                     </div>
                                     {{-- Checkmark indicator --}}
                                     <div class="absolute top-3 right-3 hidden peer-checked:block">
@@ -90,8 +87,8 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
                                             </svg>
                                         </div>
-                                        <span class="text-sm font-semibold text-gray-900">Trial Date</span>
-                                        <span class="text-xs text-gray-500 mt-1 text-center">Formal trial hearing — triggers billing & reminders</span>
+                                        <span class="text-sm font-semibold text-gray-900">{{ __('Trial Date') }}</span>
+                                        <span class="text-xs text-gray-500 mt-1 text-center">{{ __('Formal trial hearing — triggers billing & reminders') }}</span>
                                     </div>
                                     {{-- Checkmark indicator --}}
                                     <div class="absolute top-3 right-3 hidden peer-checked:block">

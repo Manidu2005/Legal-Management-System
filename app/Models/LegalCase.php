@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Hash;
 
 class LegalCase extends Model
 {
@@ -15,9 +17,18 @@ class LegalCase extends Model
 
     protected $fillable = [
         'client_id',
+        'name',
         'assigned_attorney_id',
         'case_type',
         'status',
+    ];
+
+    /**
+     * access_code_hash is intentionally excluded from mass assignment.
+     * It may only be changed via setAccessCode(), never via create()/update().
+     */
+    protected $hidden = [
+        'access_code_hash',
     ];
 
     /**
@@ -39,6 +50,36 @@ class LegalCase extends Model
         'judgment_delivered',
         'case_closed',
     ];
+
+    /**
+     * Valid case_type values for this model.
+     */
+    public const CASE_TYPES = [
+        'Civil Litigation',
+        'Property Dispute',
+        'Criminal Defence',
+        'Family Law',
+        'Labour Dispute',
+        'Land Acquisition',
+        'Other',
+    ];
+
+    /**
+     * Human-readable label: custom name, or "{client} — {case_type}".
+     */
+    protected function displayName(): Attribute
+    {
+        return Attribute::get(function (): string {
+            if (! empty($this->name)) {
+                return $this->name;
+            }
+
+            $clientName = $this->client?->name ?? 'Unknown Client';
+            $caseType = $this->case_type ?? 'General';
+
+            return "{$clientName} — {$caseType}";
+        });
+    }
 
     /**
      * The client this case belongs to.
@@ -94,5 +135,31 @@ class LegalCase extends Model
     public function totalAppearanceFee(): float
     {
         return $this->trialDateCount() * ($this->assignedAttorney->flat_appearance_rate ?? 0);
+    }
+
+    /**
+     * Whether this case has an access code configured.
+     */
+    public function hasAccessCode(): bool
+    {
+        return ! empty($this->access_code_hash);
+    }
+
+    /**
+     * Set (or change) the case's access code. The raw code is hashed
+     * immediately and never persisted or logged in plain text.
+     */
+    public function setAccessCode(string $code): void
+    {
+        $this->access_code_hash = Hash::make($code);
+        $this->save();
+    }
+
+    /**
+     * Verify a raw code against the stored hash.
+     */
+    public function verifyAccessCode(string $code): bool
+    {
+        return $this->hasAccessCode() && Hash::check($code, $this->access_code_hash);
     }
 }

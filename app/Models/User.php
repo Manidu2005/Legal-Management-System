@@ -26,6 +26,7 @@ class User extends Authenticatable
         'branch',
         'flat_appearance_rate',
         'status',
+        'locale',
     ];
 
     /**
