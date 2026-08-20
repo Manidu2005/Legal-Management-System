@@ -23,6 +23,7 @@ class StoreDocumentRequest extends FormRequest
     {
         return [
             'case_id' => ['required', 'exists:legal_cases,id'],
+            'name' => ['nullable', 'string', 'max:255'],
             'documents' => ['required', 'array', 'min:1'],
             'documents.*' => [
                 'required',

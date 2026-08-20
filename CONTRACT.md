@@ -18,6 +18,7 @@
 | password | string | required, hashed | |
 | remember_token | string(100) | nullable | |
 | **role** | enum(`partner`, `associate`, `clerk`) | default: `clerk` | Controls all RBAC |
+| **locale** | string | default: `en` | User's preferred locale |
 | **branch** | string | nullable | Office/branch name |
 | **flat_appearance_rate** | decimal(10,2) | default: 0 | LKR per trial date appearance |
 | **status** | enum(`active`, `suspended`) | default: `active` | Suspended users cannot log in |
@@ -61,9 +62,11 @@
 |--------|------|-------------|-------|
 | id | bigint unsigned | PK, auto-increment | |
 | client_id | bigint unsigned | FK → `clients.id`, cascade delete | |
+| **name** | string | nullable | Case name/title |
 | assigned_attorney_id | bigint unsigned | FK → `users.id`, restrict delete | |
-| case_type | string | nullable | Free-text for now |
+| case_type | string | nullable | See `LegalCase::CASE_TYPES` |
 | status | enum | default: `pending` | See values below |
+| **access_code_hash** | string | nullable | Bcrypt hash of client access code — the raw code is never stored |
 | created_at | timestamp | | |
 | updated_at | timestamp | | |
 
@@ -118,6 +121,7 @@ Use `LegalCase::MILESTONE_STATUSES` constant in code.
 |--------|------|-------------|-------|
 | id | bigint unsigned | PK, auto-increment | |
 | case_id | bigint unsigned | FK → `legal_cases.id`, cascade delete | |
+| **name** | string | nullable | Document name/title |
 | file_path | string | required | Storage path |
 | file_type | string | required | Extension: pdf, jpg, png |
 | category | enum(`evidence`, `deeds`, `correspondence`) | required | |
@@ -260,6 +264,7 @@ Place PDF Blade templates in `resources/views/pdf/`.
 // Case statuses
 LegalCase::STATUSES              // ['pending', 'active', 'trial_scheduled', 'judgment_delivered', 'case_closed']
 LegalCase::MILESTONE_STATUSES    // ['trial_scheduled', 'judgment_delivered', 'case_closed']
+LegalCase::CASE_TYPES            // ['Civil Litigation', 'Property Dispute', 'Criminal Defence', 'Family Law', 'Labour Dispute', 'Land Acquisition', 'Other']
 
 // Document constraints
 Document::ALLOWED_FILE_TYPES     // ['pdf', 'jpg', 'png']

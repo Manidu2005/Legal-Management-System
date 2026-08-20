@@ -41,6 +41,19 @@ class LegalCase extends Model
     ];
 
     /**
+     * Valid case_type values for this model.
+     */
+    public const CASE_TYPES = [
+        'Civil Litigation',
+        'Property Dispute',
+        'Criminal Defence',
+        'Family Law',
+        'Labour Dispute',
+        'Land Acquisition',
+        'Other',
+    ];
+
+    /**
      * The client this case belongs to.
      */
     public function client(): BelongsTo
