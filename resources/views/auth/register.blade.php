@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="text-center mb-8">
-        <h2 class="font-heading font-bold text-2xl text-slate-900 tracking-tight">Create an account</h2>
-        <p class="text-slate-500 mt-1">Join LexLanka to manage your practice</p>
+        <h2 class="font-sans font-semibold text-2xl text-mist-950 dark:text-white tracking-tight">Create an account</h2>
+        <p class="text-mist-500 dark:text-mist-400 mt-1">Join LexLanka to manage your practice</p>
     </div>
 
     <form method="POST" action="{{ route('register') }}" class="space-y-5">
@@ -39,9 +39,9 @@
             Create Account
         </button>
 
-        <p class="text-center text-sm text-slate-500 mt-6">
+        <p class="text-center text-sm text-mist-500 dark:text-mist-400 mt-6">
             Already registered? 
-            <a href="{{ route('login') }}" class="font-medium text-indigo-600 hover:text-indigo-500 transition-colors">Sign in here</a>
+            <a href="{{ route('login') }}" class="font-medium text-mist-700 dark:text-mist-300 hover:text-mist-950 dark:hover:text-white transition-colors">Sign in here</a>
         </p>
     </form>
 </x-guest-layout>

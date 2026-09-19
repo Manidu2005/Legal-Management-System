@@ -56,7 +56,7 @@
         <div class="grid-2">
             <div class="col">
                 <div class="field"><label>Case Reference</label><span>{{ $caseRef }}</span></div>
-                <div class="field"><label>Case Type</label><span>{{ $case->case_type ?: 'General Legal' }}</span></div>
+                <div class="field"><label>Case Type</label><span>{{ ($case->caseCategory->name ?? $case->case_type_other) ?: 'General Legal' }}</span></div>
                 <div class="field">
                     <label>Status</label>
                     @php

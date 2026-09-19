@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\CaseCategory;
 use App\Models\Client;
+use App\Models\Court;
 use App\Models\CourtDate;
 use App\Models\Document;
 use App\Models\LedgerEntry;
@@ -18,6 +20,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // ─── Case-type taxonomy & court/forum map ─────────────────
+        $this->call([
+            CaseCategorySeeder::class,
+            CourtSeeder::class,
+        ]);
+
+        // Small helper to look up a leaf (level 3) case category by name.
+        $category = fn (string $name) => CaseCategory::where('name', $name)
+            ->where('level', CaseCategory::LEVEL_SPECIFIC_TYPE)
+            ->firstOrFail();
+
+        $court = fn (string $name) => Court::where('name', $name)->firstOrFail();
+
         // ─── Module 4: Users ───────────────────────────────────────
         $partner = User::create([
             'name' => 'Ranil Jayasuriya',
@@ -106,42 +121,52 @@ class DatabaseSeeder extends Seeder
         $case1 = LegalCase::create([
             'client_id' => $client1->id,
             'assigned_attorney_id' => $partner->id,
-            'case_type' => 'Civil Litigation',
+            'case_category_id' => $category('Breach of contract')->id,
+            'court_id' => $court('District Court')->id,
+            'applicable_law' => LegalCase::APPLICABLE_LAW_GENERAL,
             'status' => 'active',
         ]);
 
         $case2 = LegalCase::create([
             'client_id' => $client2->id,
             'assigned_attorney_id' => $associate->id,
-            'case_type' => 'Property Dispute',
+            'case_category_id' => $category('Declaration of title')->id,
+            'court_id' => $court('District Court')->id,
+            'applicable_law' => LegalCase::APPLICABLE_LAW_GENERAL,
             'status' => 'trial_scheduled',
         ]);
 
         $case3 = LegalCase::create([
             'client_id' => $client3->id,
             'assigned_attorney_id' => $partner->id,
-            'case_type' => 'Criminal Defence',
+            'case_category_id' => $category('Robbery (including aggravated robbery with weapons)')->id,
+            'court_id' => $court('High Court')->id,
             'status' => 'pending',
         ]);
 
         $case4 = LegalCase::create([
             'client_id' => $client1->id,
             'assigned_attorney_id' => $associate2->id,
-            'case_type' => 'Family Law',
+            'case_category_id' => $category('Divorce — fault-based (general law)')->id,
+            'court_id' => $court('District Court')->id,
+            'applicable_law' => LegalCase::APPLICABLE_LAW_GENERAL,
             'status' => 'active',
         ]);
 
         $case5 = LegalCase::create([
             'client_id' => $client4->id,
             'assigned_attorney_id' => $associate->id,
-            'case_type' => 'Labour Dispute',
+            'case_category_id' => $category('Unjustified / unfair termination')->id,
+            'court_id' => $court('Labour Tribunal')->id,
             'status' => 'judgment_delivered',
         ]);
 
         $case6 = LegalCase::create([
             'client_id' => $client2->id,
             'assigned_attorney_id' => $partner->id,
-            'case_type' => 'Land Acquisition',
+            'case_category_id' => $category('Land acquisition compensation dispute')->id,
+            'court_id' => $court('Land Acquisition Board of Review')->id,
+            'applicable_law' => LegalCase::APPLICABLE_LAW_GENERAL,
             'status' => 'case_closed',
         ]);
 

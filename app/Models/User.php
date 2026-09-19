@@ -70,6 +70,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Judgments uploaded by this user to the firm-wide library.
+     */
+    public function uploadedJudgments(): HasMany
+    {
+        return $this->hasMany(Judgment::class, 'uploaded_by');
+    }
+
+    /**
+     * Research notes added by this user.
+     */
+    public function addedResearchNotes(): HasMany
+    {
+        return $this->hasMany(ResearchNote::class, 'added_by');
+    }
+
+    /**
      * Ledger entries recorded by this user.
      */
     public function recordedLedgerEntries(): HasMany

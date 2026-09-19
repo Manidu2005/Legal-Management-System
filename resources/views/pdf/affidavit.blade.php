@@ -153,7 +153,7 @@
             </tr>
             <tr>
                 <td>Case Type</td>
-                <td>{{ ucfirst($case->case_type ?? 'N/A') }}</td>
+                <td>{{ $case->caseCategory->name ?? $case->case_type_other ?? 'N/A' }}</td>
             </tr>
         </table>
 
@@ -180,7 +180,7 @@
 
         <p class="numbered-item">
             <strong>3.</strong> That this affidavit is made in support of proceedings in
-            <strong>Case No. {{ $case->id }}</strong> ({{ ucfirst($case->case_type ?? 'N/A') }})
+            <strong>Case No. {{ $case->id }}</strong> ({{ $case->caseCategory->name ?? $case->case_type_other ?? 'N/A' }})
             and for such other purposes as may be required by law.
         </p>
 

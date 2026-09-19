@@ -172,6 +172,7 @@ class CaseAccessCodeTest extends TestCase
         $this->actingAs($clerk)->put(route('cases.update', $codedCase), [
             'client_id' => $codedCase->client_id,
             'assigned_attorney_id' => $codedCase->assigned_attorney_id,
+            'case_category_id' => $codedCase->case_category_id,
             'status' => $codedCase->status,
         ])->assertForbidden();
     }

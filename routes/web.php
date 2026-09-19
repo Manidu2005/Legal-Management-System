@@ -21,5 +21,8 @@ require __DIR__.'/cases.php';        // Module 5: Cases CRUD + Dashboard
 require __DIR__.'/documents.php';    // Module 1: Documents & Search
 require __DIR__.'/scheduling.php';   // Module 2: Court Dates
 require __DIR__.'/billing.php';      // Module 3: Billing & Financial
+require __DIR__.'/research.php';     // Research Notes
+require __DIR__.'/judgments.php';    // Judgment Library
 require __DIR__.'/users.php';        // Module 4: Users & Client Intake
+require __DIR__.'/taxonomy.php';     // Case category taxonomy & courts admin
 require __DIR__.'/auth.php';         // Auth (Breeze)

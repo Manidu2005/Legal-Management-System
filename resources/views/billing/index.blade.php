@@ -2,8 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between w-full gap-4">
             <div>
-                <h2 class="heading-display !text-3xl text-slate-800">{{ __('Financial Dashboard') }}</h2>
-                <p class="text-sm text-slate-500 mt-1">
+                <h2 class="heading-display !text-3xl">{{ __('Financial Dashboard') }}</h2>
+                <p class="text-sm text-mist-500 dark:text-mist-400 mt-1">
                     @if(auth()->user()->role === 'associate')
                         {{ __('Billing and income for your assigned cases.') }}
                     @else
@@ -25,15 +25,15 @@
             x-data="{ show: true }"
             x-show="show"
             x-transition
-            class="glass border border-emerald-500/30 bg-emerald-50/80 text-emerald-700 px-4 py-3 rounded-xl mb-6 flex items-center justify-between gap-3 animate-fade-in-up"
+            class="alert-success mb-6 justify-between"
         >
             <div class="flex items-center gap-3">
-                <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span>{{ session('success') }}</span>
             </div>
-            <button type="button" @click="show = false" class="text-emerald-600/70 hover:text-emerald-800 transition-colors" aria-label="{{ __('Dismiss') }}">
+            <button type="button" @click="show = false" class="text-emerald-600/70 dark:text-emerald-400/70 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors" aria-label="{{ __('Dismiss') }}">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -44,39 +44,39 @@
     {{-- Appearance Income Summary — associates only (merged from My Income) --}}
     @if(!empty($incomeSummary))
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 animate-fade-in-up stagger-1">
-            <div class="glass-card p-6 border border-white/50">
-                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{{ __('Flat Appearance Rate') }}</div>
-                <div class="text-3xl sm:text-4xl font-heading font-bold text-slate-800 font-mono tracking-tight">LKR {{ number_format($incomeSummary['rate'], 2) }}</div>
-                <div class="text-xs text-slate-400 mt-1">{{ __('per trial date') }}</div>
+            <div class="stat-card">
+                <div class="stat-label">{{ __('Flat Appearance Rate') }}</div>
+                <div class="stat-value font-mono !text-3xl sm:!text-4xl tracking-tight">LKR {{ number_format($incomeSummary['rate'], 2) }}</div>
+                <div class="text-xs text-mist-400 dark:text-mist-500 mt-1">{{ __('per trial date') }}</div>
             </div>
-            <div class="glass-card p-6 border border-white/50">
-                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{{ __('Assigned Cases') }}</div>
-                <div class="text-3xl sm:text-4xl font-heading font-bold text-slate-800 font-mono tracking-tight">{{ $incomeSummary['case_summaries']->count() }}</div>
+            <div class="stat-card">
+                <div class="stat-label">{{ __('Assigned Cases') }}</div>
+                <div class="stat-value font-mono !text-3xl sm:!text-4xl tracking-tight">{{ $incomeSummary['case_summaries']->count() }}</div>
             </div>
-            <div class="glass-card p-6 border border-white/50">
-                <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{{ __('Total Appearance Income') }}</div>
-                <div class="text-3xl sm:text-4xl font-heading font-bold text-emerald-700 font-mono tracking-tight">LKR {{ number_format($incomeSummary['total_income'], 2) }}</div>
+            <div class="stat-card">
+                <div class="stat-label">{{ __('Total Appearance Income') }}</div>
+                <div class="stat-value font-mono !text-3xl sm:!text-4xl tracking-tight text-emerald-700 dark:text-emerald-400">LKR {{ number_format($incomeSummary['total_income'], 2) }}</div>
             </div>
         </div>
     @endif
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-fade-in-up {{ !empty($incomeSummary) ? 'stagger-2' : 'stagger-1' }}">
-        <div class="glass-card p-6 border border-white/50">
-            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{{ __('Total Revenue (Operational)') }}</div>
-            <div class="text-3xl sm:text-4xl font-heading font-bold text-slate-800 font-mono tracking-tight">Rs. {{ number_format($totalRevenue, 2) }}</div>
+        <div class="stat-card">
+            <div class="stat-label">{{ __('Total Revenue (Operational)') }}</div>
+            <div class="stat-value font-mono !text-3xl sm:!text-4xl tracking-tight">Rs. {{ number_format($totalRevenue, 2) }}</div>
         </div>
-        <div class="glass-card p-6 border border-white/50">
-            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{{ __('Total Trust Balance') }}</div>
-            <div class="text-3xl sm:text-4xl font-heading font-bold text-emerald-700 font-mono tracking-tight">Rs. {{ number_format($totalTrust, 2) }}</div>
+        <div class="stat-card">
+            <div class="stat-label">{{ __('Total Trust Balance') }}</div>
+            <div class="stat-value font-mono !text-3xl sm:!text-4xl tracking-tight text-emerald-700 dark:text-emerald-400">Rs. {{ number_format($totalTrust, 2) }}</div>
         </div>
-        <div class="glass-card p-6 border border-white/50">
-            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{{ __('Total Active Cases') }}</div>
-            <div class="text-3xl sm:text-4xl font-heading font-bold text-slate-800 font-mono tracking-tight">{{ $totalCases }}</div>
+        <div class="stat-card">
+            <div class="stat-label">{{ __('Total Active Cases') }}</div>
+            <div class="stat-value font-mono !text-3xl sm:!text-4xl tracking-tight">{{ $totalCases }}</div>
         </div>
     </div>
 
     <div class="glass-card overflow-hidden animate-fade-in-up {{ !empty($incomeSummary) ? 'stagger-3' : 'stagger-2' }}">
-        <div class="p-6 border-b border-slate-200/60 bg-white/50 backdrop-blur-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="p-6 border-b border-mist-950/10 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h3 class="heading-section !text-lg">{{ __('Case Financial Summaries') }}</h3>
             <a href="{{ route('billing.export-report') }}" class="btn-secondary !py-2 !px-4 !text-sm self-start sm:self-auto">{{ __('Download Report') }}</a>
         </div>
@@ -93,26 +93,26 @@
                         <th class="text-right">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody class="divide-y divide-mist-950/10 dark:divide-white/10">
                     @forelse($caseSummaries as $summary)
                         <tr class="table-row-dynamic group">
                             <td>
-                                <div class="font-medium text-slate-800">{{ $summary['case']->client->name ?? __('Unknown Client') }}</div>
-                                <div class="text-xs text-slate-500 font-mono mt-0.5">LEX-{{ $summary['case']->created_at->format('Y').'-'.str_pad($summary['case']->id, 3, '0', STR_PAD_LEFT) }}</div>
+                                <div class="font-medium text-mist-950 dark:text-white">{{ $summary['case']->client->name ?? __('Unknown Client') }}</div>
+                                <div class="text-xs text-mist-500 dark:text-mist-400 font-mono mt-0.5">LEX-{{ $summary['case']->created_at->format('Y').'-'.str_pad($summary['case']->id, 3, '0', STR_PAD_LEFT) }}</div>
                             </td>
                             <td>
-                                <span class="badge-dynamic bg-slate-100 text-slate-600 border border-slate-200">{{ __(':count dates', ['count' => $summary['trial_date_count']]) }}</span>
+                                <span class="badge-dynamic bg-mist-950/5 dark:bg-white/5 text-mist-700 dark:text-mist-300 border border-mist-950/10 dark:border-white/10">{{ __(':count dates', ['count' => $summary['trial_date_count']]) }}</span>
                             </td>
-                            <td class="text-right font-mono text-slate-600">
+                            <td class="text-right font-mono text-mist-600 dark:text-mist-400">
                                 {{ number_format($summary['appearance_fee'], 2) }}
                             </td>
                             <td class="text-right">
-                                <span class="font-mono font-medium {{ $summary['trust_balance'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
+                                <span class="font-mono font-medium {{ $summary['trust_balance'] >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
                                     Rs. {{ number_format($summary['trust_balance'], 2) }}
                                 </span>
                             </td>
                             <td class="text-right">
-                                <span class="font-mono font-medium {{ $summary['operational_balance'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
+                                <span class="font-mono font-medium {{ $summary['operational_balance'] >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
                                     Rs. {{ number_format($summary['operational_balance'], 2) }}
                                 </span>
                             </td>
@@ -123,13 +123,13 @@
                     @empty
                         <tr>
                             <td colspan="6" class="!px-6 !py-14 text-center">
-                                <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-4">
+                                <div class="w-16 h-16 rounded-2xl bg-mist-950/5 dark:bg-white/5 flex items-center justify-center text-mist-400 dark:text-mist-500 mx-auto mb-4">
                                     <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-medium text-slate-900">{{ __('No cases found') }}</h3>
-                                <p class="mt-1 text-slate-500">{{ __('Your financial summaries will appear here.') }}</p>
+                                <h3 class="text-lg font-medium text-mist-950 dark:text-white">{{ __('No cases found') }}</h3>
+                                <p class="mt-1 text-mist-500 dark:text-mist-400">{{ __('Your financial summaries will appear here.') }}</p>
                             </td>
                         </tr>
                     @endforelse

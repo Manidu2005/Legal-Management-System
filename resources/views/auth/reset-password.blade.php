@@ -1,5 +1,10 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('password.store') }}">
+    <div class="text-center mb-8">
+        <h2 class="font-sans font-semibold text-2xl text-mist-950 dark:text-white tracking-tight">{{ __('Reset Password') }}</h2>
+        <p class="text-mist-500 dark:text-mist-400 mt-1">{{ __('Choose a new password for your account') }}</p>
+    </div>
+
+    <form method="POST" action="{{ route('password.store') }}" class="space-y-5">
         @csrf
 
         <!-- Password Reset Token -->
@@ -7,33 +12,27 @@
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <label for="email" class="label-dynamic">{{ __('Email') }}</label>
+            <input id="email" class="input-dynamic" type="email" name="email" value="{{ old('email', $request->email) }}" required autofocus autocomplete="username" />
+            <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-500 text-xs" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div>
+            <label for="password" class="label-dynamic">{{ __('Password') }}</label>
+            <input id="password" class="input-dynamic" type="password" name="password" required autocomplete="new-password" placeholder="••••••••" />
+            <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-500 text-xs" />
         </div>
 
         <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                                type="password"
-                                name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        <div>
+            <label for="password_confirmation" class="label-dynamic">{{ __('Confirm Password') }}</label>
+            <input id="password_confirmation" class="input-dynamic" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="••••••••" />
+            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2 text-red-500 text-xs" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
+        <button type="submit" class="btn-primary w-full py-3 text-base mt-2">
+            {{ __('Reset Password') }}
+        </button>
     </form>
 </x-guest-layout>

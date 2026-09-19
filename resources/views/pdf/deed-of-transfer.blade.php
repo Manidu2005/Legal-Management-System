@@ -221,7 +221,7 @@
             </tr>
             <tr>
                 <td>Case Type</td>
-                <td>{{ ucfirst($case->case_type ?? 'N/A') }}</td>
+                <td>{{ $case->caseCategory->name ?? $case->case_type_other ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td>Client Name</td>

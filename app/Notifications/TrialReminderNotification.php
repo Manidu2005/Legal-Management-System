@@ -52,7 +52,7 @@ class TrialReminderNotification extends Notification implements ShouldQueue
             ->line("This is a reminder that you have an upcoming trial date.")
             ->line("**Case:** #{$caseId}")
             ->line("**Client:** {$clientName}")
-            ->line("**Case Type:** {$case->case_type}")
+            ->line("**Case Type:** {$this->caseTypeLabel($case)}")
             ->line("**Trial Date:** {$date}")
             ->line('Please ensure all necessary preparations are completed before the trial date.')
             ->action('View Court Dates', url('/court-dates'))
@@ -84,9 +84,17 @@ class TrialReminderNotification extends Notification implements ShouldQueue
             'court_date_id' => $this->courtDate->id,
             'case_id' => $case->id,
             'client_name' => $case->client->name ?? 'N/A',
-            'case_type' => $case->case_type,
+            'case_type' => $this->caseTypeLabel($case),
             'trial_date' => $this->courtDate->date->toIso8601String(),
             'type' => 'trial_reminder',
         ];
+    }
+
+    /**
+     * Human-readable case-type label for the notification body.
+     */
+    private function caseTypeLabel(\App\Models\LegalCase $case): string
+    {
+        return $case->caseCategory?->name ?? $case->case_type_other ?? 'N/A';
     }
 }

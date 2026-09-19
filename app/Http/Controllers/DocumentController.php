@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\EnsuresCaseAccessCode;
+use App\Http\Requests\RenameDocumentRequest;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Models\Document;
 use App\Models\LegalCase;
@@ -166,6 +167,18 @@ class DocumentController extends Controller
     }
 
     /**
+     * Rename a document's display name (uploader or partner only).
+     */
+    public function rename(RenameDocumentRequest $request, Document $document): RedirectResponse
+    {
+        $document->update(['name' => $request->validated('name')]);
+
+        return redirect()
+            ->route('documents.show', $document)
+            ->with('success', 'Document renamed successfully.');
+    }
+
+    /**
      * Delete a document from storage and database.
      */
     public function destroy(Document $document): RedirectResponse
@@ -190,7 +203,7 @@ class DocumentController extends Controller
             abort(404, 'Invalid document type.');
         }
 
-        $case->load('client');
+        $case->load(['client', 'caseCategory']);
 
         $viewMap = [
             'proxy' => 'pdf.proxy',

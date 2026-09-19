@@ -39,5 +39,11 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('manage-users', function (User $user): bool {
             return $user->role === 'partner';
         });
+
+        // Gate: manage-taxonomy — only partners can manage the case category
+        // taxonomy and the court/forum list used when opening a case.
+        Gate::define('manage-taxonomy', function (User $user): bool {
+            return $user->role === 'partner';
+        });
     }
 }

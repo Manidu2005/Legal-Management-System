@@ -9,5 +9,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/documents/generate-pdf/{case}/{type}', [DocumentController::class, 'generatePdf'])->name('documents.generate-pdf');
     Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
     Route::get('/documents/{document}/preview', [DocumentController::class, 'preview'])->name('documents.preview');
+    Route::patch('/documents/{document}/rename', [DocumentController::class, 'rename'])->name('documents.rename');
     Route::resource('documents', DocumentController::class)->except(['edit', 'update']);
 });

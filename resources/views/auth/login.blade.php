@@ -3,8 +3,8 @@
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <div class="text-center mb-8">
-        <h2 class="font-heading font-bold text-2xl text-slate-900 tracking-tight">Welcome back</h2>
-        <p class="text-slate-500 mt-1">Sign in to your LexLanka workspace</p>
+        <h2 class="font-sans font-semibold text-2xl text-mist-950 dark:text-white tracking-tight">Welcome back</h2>
+        <p class="text-mist-500 dark:text-mist-400 mt-1">Sign in to your LexLanka workspace</p>
     </div>
 
     <form method="POST" action="{{ route('login') }}" class="space-y-5">
@@ -22,7 +22,7 @@
             <div class="flex justify-between items-center mb-1.5">
                 <label for="password" class="label-dynamic !mb-0">Password</label>
                 @if (Route::has('password.request'))
-                    <a class="text-sm text-indigo-600 hover:text-indigo-500 font-medium transition-colors" href="{{ route('password.request') }}">
+                    <a class="text-sm text-mist-700 dark:text-mist-300 hover:text-mist-950 dark:hover:text-white font-medium transition-colors" href="{{ route('password.request') }}">
                         Forgot password?
                     </a>
                 @endif
@@ -34,8 +34,8 @@
         <!-- Remember Me -->
         <div class="block">
             <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-slate-300 text-indigo-600 shadow-sm focus:ring-indigo-500/50" name="remember">
-                <span class="ms-2 text-sm text-slate-600">Remember me for 30 days</span>
+                <input id="remember_me" type="checkbox" class="rounded border-mist-950/10 dark:border-white/10 text-mist-950 shadow-sm focus:ring-mist-500/20" name="remember">
+                <span class="ms-2 text-sm text-mist-700 dark:text-mist-300">Remember me for 30 days</span>
             </label>
         </div>
 

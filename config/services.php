@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        // Optional extra fallback keys, comma or newline separated. When the
+        // current key hits its free-tier quota, indexing automatically
+        // rotates to the next one instead of pausing for the day.
+        'keys' => env('GEMINI_API_KEYS'),
+    ],
+
 ];
+

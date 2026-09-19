@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\CourtDate;
 use App\Models\LegalCase;
 use App\Models\LedgerEntry;
 use App\Models\User;
@@ -241,5 +242,31 @@ class IncomeViewTest extends TestCase
         foreach ($attorneySummaries as $summary) {
             $this->assertNotEmpty($summary['case_summaries']);
         }
+    }
+
+    // ---------------------------------------------------------------
+    // Case show — appearance fee must count trial dates only
+    // ---------------------------------------------------------------
+
+    public function test_case_show_appearance_fee_counts_trial_dates_only(): void
+    {
+        $partner = User::where('email', 'partner@lexlanka.lk')->firstOrFail();
+        $case = LegalCase::whereNotNull('assigned_attorney_id')->firstOrFail();
+        $case->assignedAttorney->update(['flat_appearance_rate' => 5000]);
+
+        // Wipe any seeded court dates so counts are deterministic.
+        $case->courtDates()->delete();
+
+        CourtDate::create(['case_id' => $case->id, 'date' => now()->addDays(5), 'type' => 'trial_date']);
+        CourtDate::create(['case_id' => $case->id, 'date' => now()->addDays(6), 'type' => 'trial_date']);
+        CourtDate::create(['case_id' => $case->id, 'date' => now()->addDays(1), 'type' => 'calling_date']);
+        CourtDate::create(['case_id' => $case->id, 'date' => now()->addDays(2), 'type' => 'calling_date']);
+        CourtDate::create(['case_id' => $case->id, 'date' => now()->addDays(3), 'type' => 'calling_date']);
+
+        $response = $this->actingAs($partner)->get("/cases/{$case->id}");
+        $response->assertOk();
+
+        // 2 trial dates x 5000, NOT 5 court dates x 5000.
+        $response->assertViewHas('totalAppearanceFee', 10000.0);
     }
 }

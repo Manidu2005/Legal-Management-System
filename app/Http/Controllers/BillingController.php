@@ -112,7 +112,7 @@ class BillingController extends Controller
     {
         $this->authorize('view', $case);
 
-        $case->load(['client', 'assignedAttorney', 'courtDates', 'ledgerEntries.recorder']);
+        $case->load(['client', 'assignedAttorney', 'caseCategory', 'courtDates', 'ledgerEntries.recorder']);
 
         $summary = $this->billingService->getCaseBillingSummary($case);
 

@@ -62,7 +62,7 @@ class ClientController extends Controller
      */
     public function show(Client $client): View
     {
-        $client->load(['cases.assignedAttorney']);
+        $client->load(['cases.assignedAttorney', 'cases.caseCategory']);
 
         return view('clients.show', compact('client'));
     }

@@ -1,20 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center gap-3 w-full">
-            <a href="{{ route('billing.index') }}" class="text-slate-400 hover:text-slate-600 transition-colors shrink-0" title="{{ __('Back to Billing') }}">
+            <a href="{{ route('billing.index') }}" class="text-mist-400 dark:text-mist-500 hover:text-mist-950 dark:hover:text-white transition-colors shrink-0" title="{{ __('Back to Billing') }}">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
             </a>
-            <h2 class="heading-display !text-2xl sm:!text-3xl text-slate-800">{{ __('Create Invoice') }}</h2>
+            <h2 class="heading-display !text-2xl sm:!text-3xl">{{ __('Create Invoice') }}</h2>
         </div>
     </x-slot>
 
     <div class="max-w-2xl mx-auto animate-fade-in-up stagger-1">
         <div class="glass-card overflow-hidden">
-            <div class="p-6 border-b border-slate-200/60 bg-white/50 backdrop-blur-sm">
+            <div class="p-6 border-b border-mist-950/10 dark:border-white/10">
                 <h3 class="heading-section !text-lg">{{ __('Client Financial Report') }}</h3>
-                <p class="text-sm text-slate-500 mt-1">
+                <p class="text-sm text-mist-500 dark:text-mist-400 mt-1">
                     {{ __('Select an active case below to generate a client-level financial report (invoice). This report will include trial dates, appearance fees, and all ledger entries (trust and operational).') }}
                 </p>
             </div>

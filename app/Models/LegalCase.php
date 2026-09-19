@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Hash;
 
@@ -19,7 +20,10 @@ class LegalCase extends Model
         'client_id',
         'name',
         'assigned_attorney_id',
-        'case_type',
+        'case_category_id',
+        'court_id',
+        'applicable_law',
+        'case_type_other',
         'status',
     ];
 
@@ -52,20 +56,24 @@ class LegalCase extends Model
     ];
 
     /**
-     * Valid case_type values for this model.
+     * Which personal-law system governs this case (Part 5 of the Sri Lankan
+     * case-type reference). Only meaningful for Family / Property /
+     * Succession matters — nullable/optional for everything else.
      */
-    public const CASE_TYPES = [
-        'Civil Litigation',
-        'Property Dispute',
-        'Criminal Defence',
-        'Family Law',
-        'Labour Dispute',
-        'Land Acquisition',
-        'Other',
+    public const APPLICABLE_LAW_GENERAL = 'general';
+    public const APPLICABLE_LAW_KANDYAN = 'kandyan';
+    public const APPLICABLE_LAW_THESAWALAMAI = 'thesawalamai';
+    public const APPLICABLE_LAW_MUSLIM = 'muslim';
+
+    public const APPLICABLE_LAWS = [
+        self::APPLICABLE_LAW_GENERAL => 'General Law',
+        self::APPLICABLE_LAW_KANDYAN => 'Kandyan Law',
+        self::APPLICABLE_LAW_THESAWALAMAI => 'Thesawalamai',
+        self::APPLICABLE_LAW_MUSLIM => 'Muslim Law',
     ];
 
     /**
-     * Human-readable label: custom name, or "{client} — {case_type}".
+     * Human-readable label: custom name, or "{client} — {case category}".
      */
     protected function displayName(): Attribute
     {
@@ -75,10 +83,26 @@ class LegalCase extends Model
             }
 
             $clientName = $this->client?->name ?? 'Unknown Client';
-            $caseType = $this->case_type ?? 'General';
+            $caseType = $this->caseCategory?->name ?? $this->case_type_other ?? 'General';
 
             return "{$clientName} — {$caseType}";
         });
+    }
+
+    /**
+     * The specific case-type leaf (level 3) this case is filed under.
+     */
+    public function caseCategory(): BelongsTo
+    {
+        return $this->belongsTo(CaseCategory::class, 'case_category_id');
+    }
+
+    /**
+     * The court/forum this case is being heard in.
+     */
+    public function court(): BelongsTo
+    {
+        return $this->belongsTo(Court::class, 'court_id');
     }
 
     /**
@@ -119,6 +143,32 @@ class LegalCase extends Model
     public function ledgerEntries(): HasMany
     {
         return $this->hasMany(LedgerEntry::class, 'case_id');
+    }
+
+    /**
+     * Research notes for this case.
+     */
+    public function researchNotes(): HasMany
+    {
+        return $this->hasMany(ResearchNote::class, 'case_id');
+    }
+
+    /**
+     * Judgments attached to this case from the firm-wide library.
+     */
+    public function judgments(): BelongsToMany
+    {
+        return $this->belongsToMany(Judgment::class, 'case_judgment', 'legal_case_id', 'judgment_id')
+            ->withPivot(['id', 'relevance_note', 'added_by'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Pivot rows linking this case to judgments.
+     */
+    public function caseJudgments(): HasMany
+    {
+        return $this->hasMany(CaseJudgment::class, 'legal_case_id');
     }
 
     /**

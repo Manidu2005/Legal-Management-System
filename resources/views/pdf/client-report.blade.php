@@ -167,7 +167,7 @@
             </tr>
             <tr>
                 <td class="label">Case Type:</td>
-                <td class="value">{{ $case->case_type ?? 'N/A' }}</td>
+                <td class="value">{{ $case->caseCategory->name ?? $case->case_type_other ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="label">Case Status:</td>

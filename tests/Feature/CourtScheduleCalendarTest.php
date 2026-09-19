@@ -37,8 +37,13 @@ class CourtScheduleCalendarTest extends TestCase
         $response = $this->actingAs($partner)->get(route('court-dates.index'));
 
         $response->assertOk();
-        $this->assertTrue($response->viewData('calendarDates')->has($dayKey));
-        $response->assertSee('data-calendar-day="'.$dayKey.'"', false);
+        $this->assertArrayHasKey($dayKey, $response->viewData('calendarEvents'));
+        // The calendar grid itself is rendered client-side by Alpine.js
+        // (`x-for="cell in calendarDays"`), so individual day cells never
+        // appear as static markup in the server response. What the server
+        // *does* render is the `events` map the widget hydrates from, so we
+        // assert the day's key and its tooltip panel container are present.
+        $response->assertSee($dayKey);
         $response->assertSee('data-calendar-tooltip-panel', false);
         $response->assertSee('4:17 PM');
         $response->assertSee(__('Trial Date'));
@@ -57,7 +62,7 @@ class CourtScheduleCalendarTest extends TestCase
         $response = $this->actingAs($partner)->get(route('court-dates.index'));
 
         $response->assertOk();
-        $this->assertFalse($response->viewData('calendarDates')->has($emptyDay->toDateString()));
-        $response->assertDontSee('data-calendar-day="'.$emptyDay->toDateString().'"', false);
+        $this->assertArrayNotHasKey($emptyDay->toDateString(), $response->viewData('calendarEvents'));
+        $response->assertDontSee($emptyDay->toDateString());
     }
 }
